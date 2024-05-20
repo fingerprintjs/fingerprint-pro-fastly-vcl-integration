@@ -1,0 +1,19 @@
+{
+  "extends": "@fingerprintjs/tsconfig-dx-team/tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "resolveJsonModule": true,
+    "exactOptionalPropertyTypes": false
+  },
+  "ts-node": {
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
