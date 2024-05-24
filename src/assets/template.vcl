@@ -44,6 +44,47 @@ sub proxy_browser_cache_recv {
   }
 }
 
+sub proxy_status_page_error {
+    declare local var.style_nonce STRING;
+    set var.style_nonce = randomstr(16, "1234567890abcdef");
+
+    set req.http.Content-Security-Policy = {"default-src 'none'; img-src https://fingerprint.com; style-src 'nonce-"}var.style_nonce{"'"};
+
+    declare local var.status_page_response STRING;
+    set var.status_page_response = {"
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Fingerprint Pro Fastly VCL Integration</title>
+            <link rel='icon' type='image/x-icon' href='https://fingerprint.com/img/favicon.ico'>
+            <style nonce='"} var.style_nonce {"'>
+              h1, span {
+                display: block;
+                padding-top: 1em;
+                padding-bottom: 1em;
+                text-align: center;
+              }
+            </style>
+        </head>
+        <body>
+            <h1>Fingerprint Pro Fastly VCL Integration</h1>
+            <span>Your Fastly VCL Integration is deployed</span>
+            <span>
+                Integration version: __integration_version__
+            </span>
+            <span>
+                Please reach out our support via <a href='mailto:support@fingerprint.com'>support@fingerprint.com</a> if you have any issues
+            </span>
+        </body>
+    </html>
+    "};
+
+    set obj.http.content-type = "text/html; charset=utf-8";
+    synthetic var.status_page_response;
+
+    return (deliver);
+}
+
 sub vcl_recv {
 #FASTLY recv
     declare local var.target_path STRING;
@@ -61,5 +102,16 @@ sub vcl_recv {
       if (re.group.1 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
         call proxy_browser_cache_recv;
       }
+    }
+
+    if (req.method == "GET" && req.url.path ~ "^/__behavior_path__/status") {
+        error 600;
+    }
+}
+
+sub vcl_error {
+#FASTLY error
+    if (obj.status == 600) {
+        call proxy_status_page_error;
     }
 }
