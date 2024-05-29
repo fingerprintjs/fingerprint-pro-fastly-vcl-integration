@@ -31,6 +31,12 @@ sub proxy_identification_request {
   set req.http.FPJS-Proxy-Forwarded-Host = req.http.host;
   set req.url = "/?" + req.url.qs;
   set req.backend = __ingress_backend__;
+  if (querystring.get(req.url, "region") == "eu") {
+    set req.backend = __ingress_backend_europe__;
+  }
+  if(querystring.get(req.url, "region") == "ap") {
+    set req.backend = __ingress_backend_asia__;
+  }
   return(pass);
 }
 
