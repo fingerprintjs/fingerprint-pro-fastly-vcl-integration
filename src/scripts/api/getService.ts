@@ -1,4 +1,4 @@
-import { createClient } from './utils/createClient'
+import { createClient } from '../utils/createClient'
 
 export async function getService() {
   const client = createClient('service')

@@ -1,5 +1,5 @@
-import { createClient } from './utils/createClient'
-import { getBuiltVCL } from './utils/getBuiltVCL'
+import { createClient } from '../utils/createClient'
+import { getBuiltVCL } from '../utils/getBuiltVCL'
 
 export async function createCustomVCL(versionId: number) {
   const builtVCL = await getBuiltVCL()
