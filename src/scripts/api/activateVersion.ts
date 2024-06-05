@@ -1,4 +1,4 @@
-import { createClient } from './utils/createClient'
+import { createClient } from '../utils/createClient'
 
 export async function activateVersion(versionId: number) {
   return createClient('version').activateServiceVersion({
