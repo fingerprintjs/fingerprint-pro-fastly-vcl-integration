@@ -5,6 +5,6 @@ export async function updateVCLFile(name: string, versionNumber: number, content
         service_id: process.env.FASTLY_SERVICE_ID,
         version_id: versionNumber,
         vcl_name: name,
-        content: encodeURIComponent(content),
+        content: content,
     })
 }
