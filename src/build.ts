@@ -3,6 +3,7 @@ import arg from 'arg'
 import fs from 'fs'
 import path from 'path'
 import * as process from 'process'
+import {randomString} from "./utils/randomString";
 
 const version = packageJson.version
 const args = arg({
@@ -12,6 +13,7 @@ const args = arg({
   '--asia-fpjs-domain': String,
   '--behavior-path': String,
   '--config-table-name': String,
+  '--max-connections': Number,
 })
 
 const argumentValues = {
@@ -21,6 +23,7 @@ const argumentValues = {
   ingressBackendAsia: args['--asia-fpjs-domain'] ?? 'ap.api.fpjs.io',
   behaviorPath: args['--behavior-path'] ?? 'behavior',
   configTableName: args['--config-table-name'] ?? 'fingerprint_config',
+  maxConnections: args['--max-connections'] ?? 200,
 }
 
 fs.readFile(path.join(__dirname, './assets/template.vcl'), (err, data) => {
@@ -36,6 +39,8 @@ fs.readFile(path.join(__dirname, './assets/template.vcl'), (err, data) => {
   output = output.replace(/__integration_version__/g, version)
   output = output.replace(/__behavior_path__/g, argumentValues.behaviorPath)
   output = output.replace(/__config_table_name__/g, argumentValues.configTableName)
+  output = output.replace(/__share_key__/g, randomString())
+  output = output.replace(/__max_connections__/g, argumentValues.maxConnections.toString())
 
   const distPath = path.join(process.cwd(), '/dist')
   if (!fs.existsSync(distPath)) {

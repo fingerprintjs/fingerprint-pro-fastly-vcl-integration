@@ -8,7 +8,7 @@ backend F_fpcdn_io {
     .host_header = "__fpcdn_domain__";
     .max_connections = 200;
     .port = "443";
-    .share_key = "bD6xuEeJgSnqxcYn4vY5w1";
+    .share_key = "__share_key__";
     .ssl = true;
     .ssl_cert_hostname = "__fpcdn_domain__";
     .ssl_check_cert = always;
@@ -32,7 +32,7 @@ backend F_api_fpjs_io {
     .host_header = "__global_fpjs_domain__";
     .max_connections = 200;
     .port = "443";
-    .share_key = "bD6xuEeJgSnqxcYn4vY5w1";
+    .share_key = "__share_key__";
     .ssl = true;
     .ssl_cert_hostname = "__global_fpjs_domain__";
     .ssl_check_cert = always;
@@ -56,7 +56,7 @@ backend F_eu_api_fpjs_io {
     .host_header = "__europe_fpjs_domain__";
     .max_connections = 200;
     .port = "443";
-    .share_key = "bD6xuEeJgSnqxcYn4vY5w1";
+    .share_key = "__share_key__";
     .ssl = true;
     .ssl_cert_hostname = "__europe_fpjs_domain__";
     .ssl_check_cert = always;
@@ -80,7 +80,7 @@ backend F_ap_api_fpjs_io {
     .host_header = "__asia_fpjs_domain__";
     .max_connections = 200;
     .port = "443";
-    .share_key = "bD6xuEeJgSnqxcYn4vY5w1";
+    .share_key = "__share_key__";
     .ssl = true;
     .ssl_cert_hostname = "__asia_fpjs_domain__";
     .ssl_check_cert = always;
