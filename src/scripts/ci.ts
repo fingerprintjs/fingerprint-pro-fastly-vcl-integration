@@ -14,7 +14,7 @@ async function main() {
         const versionsSorted = service.versions.sort((a, b) => b.number - a.number);
         const lastVersion = versionsSorted.length > 0 ? versionsSorted[0] : undefined;
         let versionNumber;
-        if (lastVersion.active) {
+        if (lastVersion?.active) {
             console.log('active version found', lastVersion.number);
             const version = await createVersion(lastVersion.number);
             versionNumber = version.number;
