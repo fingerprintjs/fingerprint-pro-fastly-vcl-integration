@@ -35,9 +35,14 @@ Fingerprint Fastly VCL Proxy Integration is responsible for proxying identificat
 This is a quick overview of the installation setup. For detailed step-by-step instructions, see the [Fastly VCL proxy integration guide in our documentation](https://dev.fingerprint.com/docs/fastly-vcl-proxy-integration).
 
 1. Go to Fingerprint **Dashboard** > [**API Keys**](https://dashboard.fingerprint.com/api-keys) and click **Create Proxy Key** to create a proxy secret. You will use it later to authenticate your requests to Fingerprint APIs.
-2. Build the application with `pnpm build --behavior-path="some-random-path-here" --config-table-name="fingerprint_config"` and copy `dist/integration.vcl` file's contents.
+2. Build the application with `pnpm build --behavior-path="some-random-path-here"` and copy `dist/integration.vcl` file's contents.
    - **`behavior-path` (Required):** Prefix path for integration to run
-   - **`config-table-name` (Optional):** Identifier name for Fastly VCL's dictionary to store Fingerprint related variables
+   - **`config-table-name` (Optional, default: `fingerprint_config`):** Identifier name for Fastly VCL's dictionary to store Fingerprint related variables
+   - **`fpcdn-domain` (Optional, default: `fpcdn.io`):** Domain to request agent script from
+   - **`--global-fpjs-domain` (Optional, default: `api.fpjs.io`):** Domain to make user identification requests from US region
+   - **`--europe-fpjs-domain` (Optional, default: `eu.api.fpjs.io`):** Domain to make user identification requests from Europe region
+   - **`--asia-fpjs-domain` (Optional, default: `ap.api.fpjs.io`):** Domain to make user identification requests from Asia region
+   - **`--max-connections` (Optional, default: `200`):** Fastly CDN Service maximum number of requests per second limit for each origin
 3. Paste contents to your Fastly CDN Service's Custom VCL.
 4. Create a Dictionary named `fingerprint_config` or the value you specified as `config-table-name` in Step 2 and add the following values:
 
