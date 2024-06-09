@@ -59,7 +59,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
         FingerprintJS.defaultScriptUrlPattern, // Fallback to default CDN in case of error
       ],
       endpoint: 
-        'https://yourwebsite.com/YOUR_INTEGRATION_PATH_HERE/YOUR_RESULT_PATH_HERE?region=us',
+        'https://yourwebsite.com/BEHAVIOR-PATH/GET_RESULT_PATH?region=us',
         FingerprintJS.defaultEndpoint // Fallback to default endpoint in case of error
       ],
     });
