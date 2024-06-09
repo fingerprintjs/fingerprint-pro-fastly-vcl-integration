@@ -43,7 +43,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
 
 | Key                        | Example Value             | Description                                                   |
 |----------------------------|---------------------------|---------------------------------------------------------------|
-| PROXY_SECRET               | randomStringFromDashboard | Fingerprint Pre-Shared Key Generated on Fingerprint Dashboard |
+| PROXY_SECRET               | 6XI9CLf3C9oHSB12TTaI | Fingerprint proxy secret generated in Step 1 |
 | AGENT_SCRIPT_DOWNLOAD_PATH | z5kms2                    | Random string for Fingerprint Agent Script download path      |
 | GET_RESULT_PATH            | nocmjw                    | Random string for Fingerprint Ingress endpoint path           |
 
