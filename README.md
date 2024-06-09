@@ -55,7 +55,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
     const fpPromise = FingerprintJS.load({
       apiKey: 'PUBLIC_API_KEY',
       scriptUrlPattern: [
-        'https://yourwebsite.com/YOUR_INTEGRATION_PATH_HERE/YOUR_AGENT_PATH_HERE?apiKey=<apiKey>&version=<version>&loaderVersion=<loaderVersion>',
+        'https://yourwebsite.com/BEHAVIOR-PATH/AGENT_SCRIPT_DOWNLOAD_PATH?apiKey=<apiKey>&version=<version>&loaderVersion=<loaderVersion>',
         FingerprintJS.defaultScriptUrlPattern, // Fallback to default CDN in case of error
       ],
       endpoint: 
