@@ -39,7 +39,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
    - **`behavior-path` (Required):** Prefix path for integration to run
    - **`config-table-name` (Optional):** Identifier name for Fastly VCL's dictionary to store Fingerprint related variables
 3. Paste contents to your Fastly CDN Service's Custom VCL.
-4. Create Dictionary as explained the table below
+4. Create a Dictionary named `fingerprint_config` or the value you specified as `config-table-name` in Step 2 and add the following values:
 
 | Key                        | Example Value             | Description                                                   |
 |----------------------------|---------------------------|---------------------------------------------------------------|
