@@ -71,4 +71,4 @@ If you have any questions, reach out to our [support team](https://fingerprint.c
 
 ## License
 
-This project is licensed under the MIT license. See the [LICENSE](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/blob/main/LICENSE) file for more info.
+This project is licensed under the [MIT license](LICENSE).
