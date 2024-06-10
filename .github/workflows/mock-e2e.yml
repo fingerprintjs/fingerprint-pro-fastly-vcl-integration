@@ -1,0 +1,69 @@
+name: Test e2e for PR
+
+on:
+  pull_request:
+
+jobs:
+  check-changed-files:
+    runs-on: ubuntu-20.04
+    name: Check changed files
+    outputs:
+      CANT_PASS_WITHOUT_TESTS: ${{ steps.decision.outputs.CANT_PASS_WITHOUT_TESTS }}
+    steps:
+      - id: files
+        uses: jitterbit/get-changed-files@b17fbb00bdc0c0f63fcf166580804b4d2cdc2a42
+      - name: Make decision based on changed files
+        id: decision
+        run: |
+          cantPassWithoutTests=true
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            if [[ ${changed_file} =~ ^.*\.(vcl|VCL)$ ]]; then
+              cantPassWithoutTests=false
+            fi
+            if [[ ${changed_file} =~ ^build\.ts$ ]]; then
+              cantPassWithoutTests=false
+            fi
+          done
+          echo $cantPassWithoutTests
+          echo CANT_PASS_WITHOUT_TESTS=${cantPassWithoutTests} >> $GITHUB_OUTPUT
+  build-and-test-e2e-mock:
+    # Required ENV Variables: FPJS_CI_DOMAIN, MOCK_FPCDN, FPCDN_DOMAIN, GLOBAL_FPJS_DOMAIN, EUROPE_FPJS_DOMAIN, ASIA_FPJS_DOMAIN, BEHAVIOR_PATH, CONFIG_TABLE_NAME, DEFAULT_ORIGIN, GET_RESULT_PATH, AGENT_DOWNLOAD_SCRIPT_PATH, FASTLY_API_TOKEN
+    runs-on: ubuntu-20.04
+    name: Test e2e for PR using mock app
+    needs: check-changed-files
+    if: needs['check-changed-files'].outputs.CANT_PASS_WITHOUT_TESTS == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: 'Install pnpm'
+        uses: pnpm/action-setup@129abb77bf5884e578fcaf1f37628e41622cc371
+        with:
+          version: 8
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build VCL File
+        run: pnpm run build --fpcdn-domain=${{secrets.FPCDN_DOMAIN}} --global-fpjs-domain=${{secrets.GLOBAL_FPJS_DOMAIN}} --europe-fpjs-domain=${{secrets.EUROPE_FPJS_DOMAIN}} --asia-fpjs-domain=${{secrets.ASIA_FPJS_DOMAIN}} --behavior-path=${{secrets.BEHAVIOR_PATH}} --config-table-name=${{secrets.CONFIG_TABLE_NAME}}
+      - name: Extract Branch Name
+        id: extract-branch
+        run: |
+          echo SUBDOMAIN=mock-$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}} | perl -pe 's/[^a-zA-Z0-9]+/-/g and s/-+$//g' | tr '[:upper:]' '[:lower:]') >> $GITHUB_OUTPUT
+      - name: Run CI
+        run: pnpm run ci
+        env:
+          BRANCH_NAME: ${{steps.extract-branch.outputs.SUBDOMAIN}}
+          DEFAULT_ORIGIN: ${{secrets.DEFAULT_ORIGIN}}
+          GET_RESULT_PATH: ${{secrets.GET_RESULT_PATH}}
+          AGENT_DOWNLOAD_SCRIPT_PATH: ${{secrets.AGENT_DOWNLOAD_SCRIPT_PATH}}
+          CONFIG_TABLE_NAME: ${{secrets.CONFIG_TABLE_NAME}}
+          FASTLY_API_TOKEN: ${{secrets.FASTLY_API_TOKEN}}
+      - name: Run test
+        run: pnpm test:mock-e2e
+        env:
+          TEST_DOMAIN: 'https://${{steps.extract-branch.outputs.SUBDOMAIN}}.${{secrets.FPJS_CI_DOMAIN}}.global.prod.fastly.net'
+          INTEGRATION_PATH: ${{secrets.BEHAVIOR_PATH}}
+          RESULT_PATH: ${{secrets.GET_RESULT_PATH}}
+          AGENT_PATH: ${{secrets.AGENT_DOWNLOAD_SCRIPT_PATH}}
+          API_URL: ${{secrets.MOCK_FPCDN}}

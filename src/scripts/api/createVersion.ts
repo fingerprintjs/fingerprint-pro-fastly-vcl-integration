@@ -1,13 +1,13 @@
 import { createClient } from '../utils/createClient'
 
-export async function createVersion(versionToClone?: number) {
-  if(!versionToClone) {
+export async function createVersion(service_id: string, versionToClone?: number) {
+  if (!versionToClone) {
     return createClient('version').createServiceVersion({
-      service_id: process.env.FASTLY_SERVICE_ID,
-    });
+      service_id,
+    })
   }
   return createClient('version').cloneServiceVersion({
-    service_id: process.env.FASTLY_SERVICE_ID,
+    service_id,
     version_id: versionToClone,
   })
 }
