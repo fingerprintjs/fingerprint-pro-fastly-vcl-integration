@@ -1,8 +1,8 @@
-import {createClient} from "../utils/createClient";
+import { createClient } from '../utils/createClient'
 
-export async function listVCLFiles(versionNumber: number) {
-    return createClient('vcl').listCustomVcl({
-        service_id: process.env.FASTLY_SERVICE_ID,
-        version_id: versionNumber,
-    })
+export async function listVCLFiles(service_id: string, versionNumber: number) {
+  return createClient('vcl').listCustomVcl({
+    service_id,
+    version_id: versionNumber,
+  })
 }
