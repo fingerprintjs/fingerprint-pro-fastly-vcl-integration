@@ -16,14 +16,14 @@ export function createClient(api: FastlyClientTypes) {
     case 'domain':
       client = new Fastly.DomainApi()
       break
-    case "dictionary":
-      client = new Fastly.DictionaryApi();
+    case 'dictionary':
+      client = new Fastly.DictionaryApi()
       break
-    case "dictionaryItem":
-      client = new Fastly.DictionaryItemApi();
+    case 'dictionaryItem':
+      client = new Fastly.DictionaryItemApi()
       break
-    case "backend":
-      client = new Fastly.BackendApi();
+    case 'backend':
+      client = new Fastly.BackendApi()
       break
   }
   Fastly.ApiClient.instance.authenticate(process.env.FASTLY_API_TOKEN)
