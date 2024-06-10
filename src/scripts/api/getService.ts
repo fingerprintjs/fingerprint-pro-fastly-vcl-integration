@@ -1,5 +1,5 @@
 import { createClient } from '../utils/createClient'
-import {activateVersion} from "./activateVersion";
+import { activateVersion } from './activateVersion'
 
 export async function createService(domain: string) {
   const client = createClient('service')
@@ -8,11 +8,10 @@ export async function createService(domain: string) {
     if (searchResponse && searchResponse.id) {
       return client.getServiceDetail({ service_id: searchResponse.id })
     }
+  } catch (_) {
+    console.log(`Couldn't find service with name: `, domain)
   }
-  catch (_) {
-    console.log(`Couldn't find service with name: `, domain);
-  }
-  console.log('Creating service', domain);
+  console.log('Creating service', domain)
   const createResponse = await client.createService({
     name: domain,
   })

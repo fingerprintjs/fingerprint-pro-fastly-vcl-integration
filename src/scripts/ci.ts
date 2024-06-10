@@ -5,8 +5,8 @@ import { getBuiltVCL } from './utils/getBuiltVCL'
 import { createVCLFile } from './api/createVCLFile'
 import { updateVCLFile } from './api/updateVCLFile'
 import { activateVersion } from './api/activateVersion'
-import {configDotenv} from "dotenv";
-import {setVCLMain} from "./api/setVCLMain";
+import { configDotenv } from 'dotenv'
+import { setVCLMain } from './api/setVCLMain'
 
 async function main() {
   configDotenv()

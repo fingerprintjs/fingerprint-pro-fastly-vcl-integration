@@ -8,6 +8,7 @@
     "lint:fix": "pnpm lint --fix",
     "build": "ts-node src/build.ts",
     "ci": "ts-node src/scripts/ci.ts",
+    "test:mock-e2e": "ts-node src/scripts/mockTests.ts",
     "prepare": "husky install"
   },
   "license": "MIT",
