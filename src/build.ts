@@ -31,6 +31,9 @@ fs.readFile(path.join(__dirname, './assets/template.vcl'), (err, data) => {
     console.error(err)
     process.exit(1)
   }
+  if (!argumentValues.behaviorPath) {
+    throw new Error('Argument value for `--behavior-path` is required')
+  }
   let output = data.toString()
   output = output.replace(/__fpcdn_domain__/g, argumentValues.cdnBackend)
   output = output.replace(/__global_fpjs_domain__/g, argumentValues.ingressBackend)
