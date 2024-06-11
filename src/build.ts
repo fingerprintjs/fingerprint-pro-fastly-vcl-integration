@@ -3,7 +3,7 @@ import arg from 'arg'
 import fs from 'fs'
 import path from 'path'
 import * as process from 'process'
-import {randomString} from "./utils/randomString";
+import { randomString } from './utils/randomString'
 
 const version = packageJson.version
 const args = arg({
