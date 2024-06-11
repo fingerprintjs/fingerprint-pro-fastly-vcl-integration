@@ -15,7 +15,7 @@ const args = arg({
 const argumentValues = {
   cdnBackend: args['--cdn-backend'] ?? 'F_fpcdn_io',
   ingressBackend: args['--ingress-backend'] ?? 'F_api_fpjs_io',
-  behaviorPath: args['--behavior-path'] ?? 'behavior',
+  behaviorPath: args['--behavior-path'],
   configTableName: args['--config-table-name'] ?? 'fingerprint_config',
 }
 
@@ -23,6 +23,9 @@ fs.readFile(path.join(__dirname, './assets/template.vcl'), (err, data) => {
   if (err) {
     console.error(err)
     process.exit(1)
+  }
+  if (!argumentValues.behaviorPath) {
+    throw new Error('Argument value for `--behavior-path` is required')
   }
   let output = data.toString()
   output = output.replace(/__cdn_backend__/g, argumentValues.cdnBackend)
