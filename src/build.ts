@@ -39,7 +39,7 @@ fs.readFile(path.join(__dirname, './assets/template.vcl'), (err, data) => {
   output = output.replace(/__integration_version__/g, version)
   output = output.replace(/__behavior_path__/g, argumentValues.behaviorPath)
   output = output.replace(/__config_table_name__/g, argumentValues.configTableName)
-  output = output.replace(/__share_key__/g, randomString())
+  output = output.replace(/__share_key__/g, randomString()) // Please see this URL for what share_key stands for Fastly. https://www.fastly.com/documentation/guides/concepts/healthcheck/
   output = output.replace(/__max_connections__/g, argumentValues.maxConnections.toString())
 
   const distPath = path.join(process.cwd(), '/dist')
