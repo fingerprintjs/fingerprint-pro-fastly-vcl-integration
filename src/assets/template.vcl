@@ -1,3 +1,100 @@
+backend F_fpcdn_io {
+    .always_use_host_header = true;
+    .between_bytes_timeout = 10s;
+    .connect_timeout = 1s;
+    .dynamic = true;
+    .first_byte_timeout = 15s;
+    .host = "__fpcdn_domain__";
+    .host_header = "__fpcdn_domain__";
+    .max_connections = 200;
+    .port = "443";
+    .share_key = "__share_key__";
+    .ssl = true;
+    .ssl_cert_hostname = "__fpcdn_domain__";
+    .ssl_check_cert = always;
+    .ssl_sni_hostname = "__fpcdn_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __fpcdn_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+      }
+}
+backend F_api_fpjs_io {
+    .always_use_host_header = true;
+    .between_bytes_timeout = 10s;
+    .connect_timeout = 1s;
+    .dynamic = true;
+    .first_byte_timeout = 15s;
+    .host = "__global_fpjs_domain__";
+    .host_header = "__global_fpjs_domain__";
+    .max_connections = 200;
+    .port = "443";
+    .share_key = "__share_key__";
+    .ssl = true;
+    .ssl_cert_hostname = "__global_fpjs_domain__";
+    .ssl_check_cert = always;
+    .ssl_sni_hostname = "__global_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __global_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+      }
+}
+backend F_eu_api_fpjs_io {
+    .always_use_host_header = true;
+    .between_bytes_timeout = 10s;
+    .connect_timeout = 1s;
+    .dynamic = true;
+    .first_byte_timeout = 15s;
+    .host = "__europe_fpjs_domain__";
+    .host_header = "__europe_fpjs_domain__";
+    .max_connections = 200;
+    .port = "443";
+    .share_key = "__share_key__";
+    .ssl = true;
+    .ssl_cert_hostname = "__europe_fpjs_domain__";
+    .ssl_check_cert = always;
+    .ssl_sni_hostname = "__europe_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __europe_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+      }
+}
+backend F_ap_api_fpjs_io {
+    .always_use_host_header = true;
+    .between_bytes_timeout = 10s;
+    .connect_timeout = 1s;
+    .dynamic = true;
+    .first_byte_timeout = 15s;
+    .host = "__asia_fpjs_domain__";
+    .host_header = "__asia_fpjs_domain__";
+    .max_connections = 200;
+    .port = "443";
+    .share_key = "__share_key__";
+    .ssl = true;
+    .ssl_cert_hostname = "__asia_fpjs_domain__";
+    .ssl_check_cert = always;
+    .ssl_sni_hostname = "__asia_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __asia_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+      }
+}
+
 sub proxy_agent_download_recv {
   declare local var.apikey STRING;
   set var.apikey = if (std.strlen(querystring.get(req.url, "apiKey")) > 0, querystring.get(req.url, "apiKey"), "");
@@ -11,7 +108,7 @@ sub proxy_agent_download_recv {
   unset req.http.cookie;
 
   set req.url = "/v" + var.version + "/" + var.apikey + var.loaderversion + "?" + req.url.qs;
-  set req.backend = __cdn_backend__;
+  set req.backend = F_fpcdn_io;
   return(lookup);
 }
 
@@ -30,7 +127,13 @@ sub proxy_identification_request {
   set req.http.FPJS-Proxy-Client-IP = req.http.fastly-client-ip;
   set req.http.FPJS-Proxy-Forwarded-Host = req.http.host;
   set req.url = "/?" + req.url.qs;
-  set req.backend = __ingress_backend__;
+  set req.backend = F_api_fpjs_io;
+  if (querystring.get(req.url, "region") == "eu") {
+    set req.backend = F_eu_api_fpjs_io;
+  }
+  if(querystring.get(req.url, "region") == "ap") {
+    set req.backend = F_ap_api_fpjs_io;
+  }
   return(pass);
 }
 
@@ -39,7 +142,13 @@ sub proxy_browser_cache_recv {
     set req.url = re.group.2 + "?" + req.url.qs;
 
     unset req.http.cookie;
-    set req.backend = __ingress_backend__;
+    set req.backend = F_api_fpjs_io;
+    if (querystring.get(req.url, "region") == "eu") {
+      set req.backend = F_eu_api_fpjs_io;
+    }
+    if(querystring.get(req.url, "region") == "ap") {
+      set req.backend = F_ap_api_fpjs_io;
+    }
     return(pass);
   }
 }
