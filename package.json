@@ -9,6 +9,9 @@
     "build": "ts-node src/build.ts",
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "*.ts": "pnpm run lint:fix"
+  },
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
