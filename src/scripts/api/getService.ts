@@ -74,4 +74,10 @@ async function createDictionary(serviceId: string) {
     dictionary_item_key: 'PROXY_SECRET',
     item_value: 'secret',
   })
+  await dictionaryItemClient.upsertDictionaryItem({
+    service_id: serviceId,
+    dictionary_id: dictionary.id,
+    dictionary_item_key: 'BEHAVIOR_PATH',
+    item_value: process.env.BEHAVIOR_PATH ?? 'behavior',
+  })
 }
