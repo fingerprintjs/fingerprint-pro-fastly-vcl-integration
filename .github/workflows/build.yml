@@ -6,3 +6,5 @@ jobs:
   build-and-check:
     name: Build project and run CI checks
     uses: fingerprintjs/dx-team-toolkit/.github/workflows/build-typescript-project.yml@v1
+    with:
+      yarnFlags: '--behavior-path=${{secrets.BEHAVIOR_PATH}}'
