@@ -11,7 +11,6 @@ const args = arg({
   '--global-fpjs-domain': String,
   '--europe-fpjs-domain': String,
   '--asia-fpjs-domain': String,
-  '--behavior-path': String,
   '--config-table-name': String,
   '--max-connections': Number,
 })
@@ -21,7 +20,6 @@ const argumentValues = {
   ingressBackend: args['--global-fpjs-domain'] ?? 'api.fpjs.io',
   ingressBackendEurope: args['--europe-fpjs-domain'] ?? 'eu.api.fpjs.io',
   ingressBackendAsia: args['--asia-fpjs-domain'] ?? 'ap.api.fpjs.io',
-  behaviorPath: args['--behavior-path'] ?? 'behavior',
   configTableName: args['--config-table-name'] ?? 'fingerprint_config',
   maxConnections: args['--max-connections'] ?? 200,
 }
@@ -31,16 +29,12 @@ fs.readFile(path.join(__dirname, './assets/template.vcl'), (err, data) => {
     console.error(err)
     process.exit(1)
   }
-  if (!argumentValues.behaviorPath) {
-    throw new Error('Argument value for `--behavior-path` is required')
-  }
   let output = data.toString()
   output = output.replace(/__fpcdn_domain__/g, argumentValues.cdnBackend)
   output = output.replace(/__global_fpjs_domain__/g, argumentValues.ingressBackend)
   output = output.replace(/__europe_fpjs_domain__/g, argumentValues.ingressBackendEurope)
   output = output.replace(/__asia_fpjs_domain__/g, argumentValues.ingressBackendAsia)
   output = output.replace(/__integration_version__/g, version)
-  output = output.replace(/__behavior_path__/g, argumentValues.behaviorPath)
   output = output.replace(/__config_table_name__/g, argumentValues.configTableName)
   output = output.replace(/__share_key__/g, randomString()) // Please see this URL for what share_key stands for Fastly. https://www.fastly.com/documentation/guides/concepts/healthcheck/
   output = output.replace(/__max_connections__/g, argumentValues.maxConnections.toString())
