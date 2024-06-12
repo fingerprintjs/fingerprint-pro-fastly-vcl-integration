@@ -17,17 +17,14 @@ jobs:
         run: |
           testsAreRequired=false
           for changed_file in ${{ steps.files.outputs.all }}; do
-            if [[ ${changed_file} =~ ^.*\.(vcl|VCL)$ ]]; then
-              testsAreRequired=true
-            fi
-            if [[ ${changed_file} =~ ^build\.ts$ ]]; then
+            if [[ ${changed_file} =~ ^src/.*$ ]]; then
               testsAreRequired=true
             fi
           done
           echo $testsAreRequired
           echo TESTS_ARE_REQUIRED=${testsAreRequired} >> $GITHUB_OUTPUT
   build-and-test-e2e-mock:
-    # Required ENV Variables: FPJS_CI_DOMAIN, MOCK_FPCDN, FPCDN_DOMAIN, GLOBAL_FPJS_DOMAIN, EUROPE_FPJS_DOMAIN, ASIA_FPJS_DOMAIN, INTEGRATION_PATH, CONFIG_TABLE_NAME, DEFAULT_ORIGIN, GET_RESULT_PATH, AGENT_DOWNLOAD_SCRIPT_PATH, FASTLY_API_TOKEN
+    # Required ENV Variables: FPJS_CI_DOMAIN, MOCK_FPCDN, INTEGRATION_PATH, CONFIG_TABLE_NAME, DEFAULT_ORIGIN, GET_RESULT_PATH, AGENT_DOWNLOAD_SCRIPT_PATH, FASTLY_API_TOKEN
     runs-on: ubuntu-20.04
     name: Test e2e for PR using mock app
     needs: check-changed-files
@@ -45,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Build VCL File
-        run: pnpm run build --fpcdn-domain=${{secrets.FPCDN_DOMAIN}} --global-fpjs-domain=${{secrets.GLOBAL_FPJS_DOMAIN}} --europe-fpjs-domain=${{secrets.EUROPE_FPJS_DOMAIN}} --asia-fpjs-domain=${{secrets.ASIA_FPJS_DOMAIN}} --config-table-name=${{secrets.CONFIG_TABLE_NAME}}
+        run: pnpm run build --fpcdn-domain=${{secrets.MOCK_FPCDN}} --fpjs-domain=${{secrets.MOCK_FPCDN}} --config-table-name=${{secrets.CONFIG_TABLE_NAME}}
       - name: Extract Branch Name
         id: extract-branch
         run: |
