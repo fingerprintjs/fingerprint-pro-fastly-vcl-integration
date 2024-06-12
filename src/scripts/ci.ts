@@ -1,4 +1,4 @@
-import { createService } from './api/getService'
+import { createService } from './api/createService'
 import { createVersion } from './api/createVersion'
 import { listVCLFiles } from './api/listVCLFiles'
 import { getBuiltVCL } from './utils/getBuiltVCL'
