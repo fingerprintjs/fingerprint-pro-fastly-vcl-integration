@@ -13,6 +13,15 @@ backend F_fpcdn_io {
     .ssl_cert_hostname = "__fpcdn_domain__";
     .ssl_check_cert = always;
     .ssl_sni_hostname = "__fpcdn_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __fpcdn_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+        .expected_response = 200;
+      }
 }
 backend F_api_fpjs_io {
     .always_use_host_header = true;
@@ -29,6 +38,15 @@ backend F_api_fpjs_io {
     .ssl_cert_hostname = "__global_fpjs_domain__";
     .ssl_check_cert = always;
     .ssl_sni_hostname = "__global_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __global_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+        .expected_response = 200;
+      }
 }
 backend F_eu_api_fpjs_io {
     .always_use_host_header = true;
@@ -45,6 +63,15 @@ backend F_eu_api_fpjs_io {
     .ssl_cert_hostname = "__europe_fpjs_domain__";
     .ssl_check_cert = always;
     .ssl_sni_hostname = "__europe_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __europe_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+        .expected_response = 200;
+      }
 }
 backend F_ap_api_fpjs_io {
     .always_use_host_header = true;
@@ -61,6 +88,15 @@ backend F_ap_api_fpjs_io {
     .ssl_cert_hostname = "__asia_fpjs_domain__";
     .ssl_check_cert = always;
     .ssl_sni_hostname = "__asia_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __asia_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+        .expected_response = 200;
+      }
 }
 
 sub proxy_agent_download_recv {
