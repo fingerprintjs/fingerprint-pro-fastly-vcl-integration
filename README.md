@@ -49,7 +49,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
 | Key                        | Example Value             | Description                                             |
 |----------------------------|---------------------------|---------------------------------------------------------|
 | PROXY_SECRET               | 6XI9CLf3C9oHSB12TTaI | Fingerprint proxy secret generated in Step 1            |
-| BEHAVIOR_PATH              | 02mbd3 | Random path prefix for proxy integration endpoints      |
+| INTEGRATION_PATH              | 02mbd3 | Random path prefix for proxy integration endpoints      |
 | AGENT_SCRIPT_DOWNLOAD_PATH | z5kms2                    | Random path segment for downloading the JS agent        |
 | GET_RESULT_PATH            | nocmjw                    | Random path segment Fingerprint identification requests |
 
@@ -61,11 +61,11 @@ This is a quick overview of the installation setup. For detailed step-by-step in
     const fpPromise = FingerprintJS.load({
       apiKey: 'PUBLIC_API_KEY',
       scriptUrlPattern: [
-        'https://yourwebsite.com/BEHAVIOR-PATH/AGENT_SCRIPT_DOWNLOAD_PATH?apiKey=<apiKey>&version=<version>&loaderVersion=<loaderVersion>',
+        'https://yourwebsite.com/INTEGRATION-PATH/AGENT_SCRIPT_DOWNLOAD_PATH?apiKey=<apiKey>&version=<version>&loaderVersion=<loaderVersion>',
         FingerprintJS.defaultScriptUrlPattern, // Fallback to default CDN in case of error
       ],
       endpoint: 
-        'https://yourwebsite.com/BEHAVIOR-PATH/GET_RESULT_PATH?region=us',
+        'https://yourwebsite.com/INTEGRATION-PATH/GET_RESULT_PATH?region=us',
         FingerprintJS.defaultEndpoint // Fallback to default endpoint in case of error
       ],
     });
