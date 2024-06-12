@@ -17,10 +17,7 @@ jobs:
         run: |
           testsAreRequired=false
           for changed_file in ${{ steps.files.outputs.all }}; do
-            if [[ ${changed_file} =~ ^.*\.(vcl|VCL)$ ]]; then
-              testsAreRequired=true
-            fi
-            if [[ ${changed_file} =~ (^|.*\/)?scripts\/[^\/]+\.ts$ ]]; then
+            if [[ ${changed_file} =~ ^src/.*$ ]]; then
               testsAreRequired=true
             fi
           done
