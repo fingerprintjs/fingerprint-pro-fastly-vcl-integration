@@ -45,7 +45,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Build VCL File
-        run: pnpm run build --fpcdn-domain=${{secrets.FPCDN_DOMAIN}} --global-fpjs-domain=${{secrets.GLOBAL_FPJS_DOMAIN}} --europe-fpjs-domain=${{secrets.EUROPE_FPJS_DOMAIN}} --asia-fpjs-domain=${{secrets.ASIA_FPJS_DOMAIN}} --config-table-name=${{secrets.CONFIG_TABLE_NAME}}
+        run: pnpm run build --fpcdn-domain=${{secrets.MOCK_FPCDN}} --fpjs-domain=${{secrets.MOCK_FPCDN}} --config-table-name=${{secrets.CONFIG_TABLE_NAME}}
       - name: Extract Branch Name
         id: extract-branch
         run: |
