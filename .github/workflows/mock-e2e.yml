@@ -62,7 +62,7 @@ jobs:
       - name: Run test
         run: pnpm test:mock-e2e
         env:
-          TEST_DOMAIN: 'https://${{steps.extract-branch.outputs.SUBDOMAIN}}.${{secrets.FPJS_CI_DOMAIN}}.global.prod.fastly.net'
+          TEST_DOMAIN: 'http://${{steps.extract-branch.outputs.SUBDOMAIN}}.${{secrets.FPJS_CI_DOMAIN}}.global.prod.fastly.net'
           INTEGRATION_PATH: ${{secrets.INTEGRATION_PATH}}
           RESULT_PATH: ${{secrets.GET_RESULT_PATH}}
           AGENT_PATH: ${{secrets.AGENT_DOWNLOAD_SCRIPT_PATH}}
