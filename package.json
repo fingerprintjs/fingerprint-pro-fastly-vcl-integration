@@ -7,6 +7,8 @@
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore --max-warnings 0 .",
     "lint:fix": "pnpm lint --fix",
     "build": "ts-node src/build.ts",
+    "ci": "ts-node src/scripts/ci.ts",
+    "test:mock-e2e": "ts-node src/scripts/mockTests.ts",
     "prepare": "husky install"
   },
   "lint-staged": {
@@ -23,6 +25,8 @@
     "@types/node": "^20.12.12",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
+    "dotenv": "^16.4.5",
+    "fastly": "^7.3.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.5",
     "ts-node": "^10.9.2",
