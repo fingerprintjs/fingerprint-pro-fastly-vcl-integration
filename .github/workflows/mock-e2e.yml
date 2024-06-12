@@ -20,7 +20,7 @@ jobs:
             if [[ ${changed_file} =~ ^.*\.(vcl|VCL)$ ]]; then
               testsAreRequired=true
             fi
-            if [[ ${changed_file} =~ scripts\.*\.(ts)$ ]]; then
+            if [[ ${changed_file} =~ (^|.*\/)?scripts\/[^\/]+\.ts$ ]]; then
               testsAreRequired=true
             fi
           done
