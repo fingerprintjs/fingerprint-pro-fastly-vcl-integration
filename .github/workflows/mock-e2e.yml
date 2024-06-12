@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-20.04
     name: Check changed files
     outputs:
-      CANT_PASS_WITHOUT_TESTS: ${{ steps.decision.outputs.CANT_PASS_WITHOUT_TESTS }}
+      TESTS_ARE_REQUIRED: ${{ steps.decision.outputs.TESTS_ARE_REQUIRED }}
     steps:
       - id: files
         uses: jitterbit/get-changed-files@b17fbb00bdc0c0f63fcf166580804b4d2cdc2a42
@@ -25,13 +25,13 @@ jobs:
             fi
           done
           echo $testsAreRequired
-          echo CANT_PASS_WITHOUT_TESTS=${testsAreRequired} >> $GITHUB_OUTPUT
+          echo TESTS_ARE_REQUIRED=${testsAreRequired} >> $GITHUB_OUTPUT
   build-and-test-e2e-mock:
     # Required ENV Variables: FPJS_CI_DOMAIN, MOCK_FPCDN, FPCDN_DOMAIN, GLOBAL_FPJS_DOMAIN, EUROPE_FPJS_DOMAIN, ASIA_FPJS_DOMAIN, BEHAVIOR_PATH, CONFIG_TABLE_NAME, DEFAULT_ORIGIN, GET_RESULT_PATH, AGENT_DOWNLOAD_SCRIPT_PATH, FASTLY_API_TOKEN
     runs-on: ubuntu-20.04
     name: Test e2e for PR using mock app
     needs: check-changed-files
-    if: needs['check-changed-files'].outputs.CANT_PASS_WITHOUT_TESTS == 'true'
+    if: needs['check-changed-files'].outputs.TESTS_ARE_REQUIRED == 'true'
     steps:
       - uses: actions/checkout@v4
       - name: 'Install pnpm'
