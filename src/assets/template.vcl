@@ -138,18 +138,20 @@ sub proxy_identification_request {
 }
 
 sub proxy_browser_cache_recv {
-  if (req.url.path ~ "^/__behavior_path__/([^/]+)(/.*)$") {
-    set req.url = re.group.2 + "?" + req.url.qs;
+  if (req.url.path ~ "^/([\w|-]+)/([^/]+)(/.*)$") {
+    if(re.group.1 == table.lookup(__config_table_name__, "BEHAVIOR_PATH")) {
+        set req.url = re.group.3 + "?" + req.url.qs;
 
-    unset req.http.cookie;
-    set req.backend = F_api_fpjs_io;
-    if (querystring.get(req.url, "region") == "eu") {
-      set req.backend = F_eu_api_fpjs_io;
+        unset req.http.cookie;
+        set req.backend = F_api_fpjs_io;
+        if (querystring.get(req.url, "region") == "eu") {
+          set req.backend = F_eu_api_fpjs_io;
+        }
+        if(querystring.get(req.url, "region") == "ap") {
+          set req.backend = F_ap_api_fpjs_io;
+        }
+        return(pass);
     }
-    if(querystring.get(req.url, "region") == "ap") {
-      set req.backend = F_ap_api_fpjs_io;
-    }
-    return(pass);
   }
 }
 
@@ -188,6 +190,7 @@ sub proxy_status_page_error {
     </html>
     "};
 
+    set obj.status = 200;
     set obj.http.content-type = "text/html; charset=utf-8";
     synthetic var.status_page_response;
 
@@ -197,24 +200,26 @@ sub proxy_status_page_error {
 sub vcl_recv {
 #FASTLY recv
     declare local var.target_path STRING;
-    set var.target_path = "/__behavior_path__/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
+    set var.target_path = "/" table.lookup(__config_table_name__, "BEHAVIOR_PATH") "/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
     if (req.method == "GET" && req.url.path == var.target_path) {
       call proxy_agent_download_recv;
     }
 
-    set var.target_path = "/__behavior_path__/" table.lookup(__config_table_name__, "GET_RESULT_PATH");
+    set var.target_path = "/" table.lookup(__config_table_name__, "BEHAVIOR_PATH") "/" table.lookup(__config_table_name__, "GET_RESULT_PATH");
     if (req.method == "POST" && req.url.path == var.target_path){
       call proxy_identification_request;
     }
 
-    if (req.method == "GET" && req.url.path ~ "^/__behavior_path__/([^/]+)") {
-      if (re.group.1 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
+    if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/([^/]+)") {
+      if (re.group.1 == table.lookup(__config_table_name__, "BEHAVIOR_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
         call proxy_browser_cache_recv;
       }
     }
 
-    if (req.method == "GET" && req.url.path ~ "^/__behavior_path__/status") {
-        error 600;
+    if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/status") {
+        if (re.group.1 == table.lookup(__config_table_name__, "BEHAVIOR_PATH")) {
+            error 600;
+        }
     }
 }
 
