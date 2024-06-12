@@ -35,10 +35,9 @@ Fingerprint Fastly VCL Proxy Integration is responsible for proxying identificat
 This is a quick overview of the installation setup. For detailed step-by-step instructions, see the [Fastly VCL proxy integration guide in our documentation](https://dev.fingerprint.com/docs/fastly-vcl-proxy-integration).
 
 1. Go to Fingerprint **Dashboard** > [**API Keys**](https://dashboard.fingerprint.com/api-keys) and click **Create Proxy Key** to create a proxy secret. You will use it later to authenticate your requests to Fingerprint APIs.
-2. Build the application with `pnpm build --behavior-path="some-random-path-here"`
-   - **`behavior-path` (Required):** Prefix path for integration to run
-   - **`config-table-name` (Optional, default: `fingerprint_config`):** Identifier name for Fastly VCL's dictionary to store Fingerprint related variables
-   - **`fpcdn-domain` (Optional, default: `fpcdn.io`):** Domain to request agent script from
+2. Build the application with `pnpm build`
+   - **`--config-table-name` (Optional, default: `fingerprint_config`):** Identifier name for Fastly VCL's dictionary to store Fingerprint related variables
+   - **`--fpcdn-domain` (Optional, default: `fpcdn.io`):** Domain to request agent script from
    - **`--global-fpjs-domain` (Optional, default: `api.fpjs.io`):** Domain to make user identification requests from US region
    - **`--europe-fpjs-domain` (Optional, default: `eu.api.fpjs.io`):** Domain to make user identification requests from Europe region
    - **`--asia-fpjs-domain` (Optional, default: `ap.api.fpjs.io`):** Domain to make user identification requests from Asia region
@@ -47,11 +46,12 @@ This is a quick overview of the installation setup. For detailed step-by-step in
 4. Paste contents to your Fastly CDN Service's Custom VCL.
 5. Create a Dictionary named `fingerprint_config` or the value you specified as `config-table-name` in Step 2 and add the following values:
 
-| Key                        | Example Value             | Description                                                   |
-|----------------------------|---------------------------|---------------------------------------------------------------|
-| PROXY_SECRET               | 6XI9CLf3C9oHSB12TTaI | Fingerprint proxy secret generated in Step 1 |
-| AGENT_SCRIPT_DOWNLOAD_PATH | z5kms2                    | Random path segment for downloading the JS agent      |
-| GET_RESULT_PATH            | nocmjw                    | Random path segment Fingerprint identification requests           |
+| Key                        | Example Value             | Description                                             |
+|----------------------------|---------------------------|---------------------------------------------------------|
+| PROXY_SECRET               | 6XI9CLf3C9oHSB12TTaI | Fingerprint proxy secret generated in Step 1            |
+| BEHAVIOR_PATH              | 02mbd3 | Random path prefix for proxy integration endpoints      |
+| AGENT_SCRIPT_DOWNLOAD_PATH | z5kms2                    | Random path segment for downloading the JS agent        |
+| GET_RESULT_PATH            | nocmjw                    | Random path segment Fingerprint identification requests |
 
 5. Configure the Fingerprint [JS Agent](https://dev.fingerprint.com/docs/js-agent) on your website using the paths defined in Step 2.
 
