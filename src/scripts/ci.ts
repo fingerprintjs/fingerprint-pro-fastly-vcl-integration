@@ -24,7 +24,7 @@ async function main() {
       console.log('created draft version', versionNumber)
     }
     if (!versionNumber) {
-      console.log('version not found creating...')
+      console.log('version not found, creating...')
       const version = await createVersion(service.id)
       versionNumber = version.number
       console.log('version created', versionNumber)
@@ -50,4 +50,10 @@ async function main() {
   }
 }
 
-void main()
+main().then(() => {
+  console.log('CI Deploy completed!')
+  process.exit(0)
+}).catch((err) => {
+  console.error('CI Deploy failed', err);
+  process.exit(1)
+})
