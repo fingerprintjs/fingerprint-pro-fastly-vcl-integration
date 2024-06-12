@@ -50,10 +50,12 @@ async function main() {
   }
 }
 
-main().then(() => {
-  console.log('CI Deploy completed!')
-  process.exit(0)
-}).catch((err) => {
-  console.error('CI Deploy failed', err);
-  process.exit(1)
-})
+main()
+  .then(() => {
+    console.log('CI Deploy completed!')
+    process.exit(0)
+  })
+  .catch((err) => {
+    console.error('CI Deploy failed', err)
+    process.exit(1)
+  })
