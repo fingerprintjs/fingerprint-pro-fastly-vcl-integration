@@ -9,7 +9,7 @@ export async function createService(domain: string) {
       return client.getServiceDetail({ service_id: searchResponse.id })
     }
   } catch (_) {
-    console.log(`Couldn't find service with name: `, domain)
+    console.log(`Couldn't find service with name: ${domain}`)
   }
   console.log('Creating service', domain)
   const createResponse = await client.createService({
@@ -29,7 +29,7 @@ async function createOrigin(serviceId: string) {
   await client.createBackend({
     service_id: serviceId,
     version_id: 1,
-    address: process.env.DEFAULT_ORIGIN ?? 'playground.orkunfpjs.com',
+    address: process.env.DEFAULT_ORIGIN,
     name: 'default-backend',
     port: 443,
   })
