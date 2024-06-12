@@ -200,12 +200,12 @@ sub proxy_status_page_error {
 sub vcl_recv {
 #FASTLY recv
     declare local var.target_path STRING;
-    set var.target_path = "/" table.lookup(fingerprint_config, "BEHAVIOR_PATH") "/" table.lookup(fingerprint_config, "AGENT_SCRIPT_DOWNLOAD_PATH");
+    set var.target_path = "/" table.lookup(__config_table_name__, "BEHAVIOR_PATH") "/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
     if (req.method == "GET" && req.url.path == var.target_path) {
       call proxy_agent_download_recv;
     }
 
-    set var.target_path = "/" table.lookup(fingerprint_config, "BEHAVIOR_PATH") "/" table.lookup(fingerprint_config, "GET_RESULT_PATH");
+    set var.target_path = "/" table.lookup(__config_table_name__, "BEHAVIOR_PATH") "/" table.lookup(__config_table_name__, "GET_RESULT_PATH");
     if (req.method == "POST" && req.url.path == var.target_path){
       call proxy_identification_request;
     }
