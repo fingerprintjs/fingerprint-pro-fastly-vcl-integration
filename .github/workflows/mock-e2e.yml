@@ -53,7 +53,7 @@ jobs:
       - name: Run CI
         run: pnpm run ci
         env:
-          SUBDOMAIN: ${{steps.extract-branch.outputs.SUBDOMAIN}}
+          SERVICE_NAME: "${{steps.extract-branch.outputs.SUBDOMAIN}}.${{secrets.FPJS_CI_DOMAIN}}"
           DEFAULT_ORIGIN: ${{secrets.DEFAULT_ORIGIN}}
           GET_RESULT_PATH: ${{secrets.GET_RESULT_PATH}}
           AGENT_DOWNLOAD_SCRIPT_PATH: ${{secrets.AGENT_DOWNLOAD_SCRIPT_PATH}}
