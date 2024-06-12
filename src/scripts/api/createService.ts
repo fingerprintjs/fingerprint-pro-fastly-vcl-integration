@@ -77,7 +77,7 @@ async function createDictionary(serviceId: string) {
   await dictionaryItemClient.upsertDictionaryItem({
     service_id: serviceId,
     dictionary_id: dictionary.id,
-    dictionary_item_key: 'BEHAVIOR_PATH',
-    item_value: process.env.BEHAVIOR_PATH ?? 'behavior',
+    dictionary_item_key: 'INTEGRATION_PATH',
+    item_value: process.env.INTEGRATION_PATH ?? 'integration',
   })
 }

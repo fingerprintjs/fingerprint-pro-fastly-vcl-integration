@@ -139,7 +139,7 @@ sub proxy_identification_request {
 
 sub proxy_browser_cache_recv {
   if (req.url.path ~ "^/([\w|-]+)/([^/]+)(/.*)$") {
-    if(re.group.1 == table.lookup(__config_table_name__, "BEHAVIOR_PATH")) {
+    if(re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
         set req.url = re.group.3 + "?" + req.url.qs;
 
         unset req.http.cookie;
@@ -200,24 +200,24 @@ sub proxy_status_page_error {
 sub vcl_recv {
 #FASTLY recv
     declare local var.target_path STRING;
-    set var.target_path = "/" table.lookup(__config_table_name__, "BEHAVIOR_PATH") "/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
+    set var.target_path = "/" table.lookup(__config_table_name__, "INTEGRATION_PATH") "/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
     if (req.method == "GET" && req.url.path == var.target_path) {
       call proxy_agent_download_recv;
     }
 
-    set var.target_path = "/" table.lookup(__config_table_name__, "BEHAVIOR_PATH") "/" table.lookup(__config_table_name__, "GET_RESULT_PATH");
+    set var.target_path = "/" table.lookup(__config_table_name__, "INTEGRATION_PATH") "/" table.lookup(__config_table_name__, "GET_RESULT_PATH");
     if (req.method == "POST" && req.url.path == var.target_path){
       call proxy_identification_request;
     }
 
     if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/([^/]+)") {
-      if (re.group.1 == table.lookup(__config_table_name__, "BEHAVIOR_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
+      if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
         call proxy_browser_cache_recv;
       }
     }
 
     if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/status") {
-        if (re.group.1 == table.lookup(__config_table_name__, "BEHAVIOR_PATH")) {
+        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
             error 600;
         }
     }
