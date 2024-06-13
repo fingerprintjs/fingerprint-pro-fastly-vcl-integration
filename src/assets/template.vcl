@@ -157,6 +157,43 @@ sub proxy_browser_cache_recv {
 
 sub proxy_status_page_error {
     declare local var.style_nonce STRING;
+    declare local var.integration_status_text STRING;
+
+    declare local var.missing_env BOOL;
+    set var.missing_env = false;
+    
+    declare local var.proxy_secret_missing BOOL;
+    set var.proxy_secret_missing = false;
+    
+    declare local var.agent_path_missing BOOL;
+    set var.agent_path_missing = false;
+    
+    declare local var.result_path_missing BOOL;
+    set var.result_path_missing = false;
+
+    if(std.strlen(table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH")) == 0) {
+        set var.agent_path_missing = true;
+    }
+    if(std.strlen(table.lookup(__config_table_name__, "GET_RESULT_PATH")) == 0) {
+        set var.result_path_missing = true;
+    }
+    if(std.strlen(table.lookup(__config_table_name__, "PROXY_SECRET")) == 0) {
+        set var.proxy_secret_missing = true;
+    }
+
+    if(var.proxy_secret_missing == true || var.agent_path_missing == true || var.result_path_missing == true) {
+        set var.missing_env = true;
+    }
+
+    set var.integration_status_text = {"
+        <p>
+            <span>"}if(var.missing_env, "Your integration environment has problems", "Congratulations! Your integration deployed successfully"){"</span>
+            <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "❌", "✅"){"</span>
+            <span>GET_RESULT_PATH: "}if(var.result_path_missing, "❌", "✅"){"</span>
+            <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
+        </p>
+    "};
+    
     set var.style_nonce = randomstr(16, "1234567890abcdef");
 
     set req.http.Content-Security-Policy = {"default-src 'none'; img-src https://fingerprint.com; style-src 'nonce-"}var.style_nonce{"'"};
@@ -179,7 +216,7 @@ sub proxy_status_page_error {
         </head>
         <body>
             <h1>Fingerprint Pro Fastly VCL Integration</h1>
-            <span>Your Fastly VCL Integration is deployed</span>
+            "} var.integration_status_text {"
             <span>
                 Integration version: __integration_version__
             </span>
