@@ -7,6 +7,7 @@
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore --max-warnings 0 .",
     "lint:fix": "pnpm lint --fix",
     "build": "ts-node src/build.ts",
+    "build:ci": "ts-node src/ci-build.ts",
     "ci": "ts-node src/scripts/ci.ts",
     "test:mock-e2e": "ts-node src/scripts/mockTests.ts",
     "prepare": "husky install"
