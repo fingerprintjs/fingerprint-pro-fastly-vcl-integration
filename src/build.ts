@@ -10,14 +10,14 @@ const args = arg({
   '--fpcdn-domain': String,
   '--fpjs-domain': String,
   '--config-table-name': String,
-  '--max-connections': Number,
+  '--max-connections': String,
 })
 
 const argumentValues = {
   cdnBackend: args['--fpcdn-domain'] ?? 'fpcdn.io',
   ingressBackend: args['--fpjs-domain'] ?? 'api.fpjs.io',
   configTableName: args['--config-table-name'] ?? 'fingerprint_config',
-  maxConnections: args['--max-connections'] ?? 200,
+  maxConnections: args['--max-connections'] ?? '200',
 }
 
 fs.readFile(path.join(__dirname, './assets/template.vcl'), (err, data) => {
@@ -33,7 +33,7 @@ fs.readFile(path.join(__dirname, './assets/template.vcl'), (err, data) => {
   output = output.replace(/__integration_version__/g, version)
   output = output.replace(/__config_table_name__/g, argumentValues.configTableName)
   output = output.replace(/__share_key__/g, randomString()) // Please see this URL for what share_key stands for Fastly. https://www.fastly.com/documentation/guides/concepts/healthcheck/
-  output = output.replace(/__max_connections__/g, argumentValues.maxConnections.toString())
+  output = output.replace(/__max_connections__/g, argumentValues.maxConnections)
 
   const distPath = path.join(process.cwd(), '/dist')
   if (!fs.existsSync(distPath)) {

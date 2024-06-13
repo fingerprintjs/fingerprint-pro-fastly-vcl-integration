@@ -20,6 +20,7 @@ backend F_fpcdn_io {
         .threshold = 1;
         .timeout = 2s;
         .window = 5;
+        .expected_response = 200;
       }
 }
 backend F_api_fpjs_io {
@@ -44,6 +45,7 @@ backend F_api_fpjs_io {
         .threshold = 1;
         .timeout = 2s;
         .window = 5;
+        .expected_response = 200;
       }
 }
 backend F_eu_api_fpjs_io {
@@ -68,6 +70,7 @@ backend F_eu_api_fpjs_io {
         .threshold = 1;
         .timeout = 2s;
         .window = 5;
+        .expected_response = 200;
       }
 }
 backend F_ap_api_fpjs_io {
@@ -92,6 +95,7 @@ backend F_ap_api_fpjs_io {
         .threshold = 1;
         .timeout = 2s;
         .window = 5;
+        .expected_response = 200;
       }
 }
 
