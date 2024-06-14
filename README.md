@@ -37,7 +37,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
    - **`--fpcdn-domain` (Optional, default: `fpcdn.io`):** Domain to request agent script from
    - **`--fpjs-domain` (Optional, default: `api.fpjs.io`):** Domain to make user identification requests
    - **`--max-connections` (Optional, default: `200`):** Fastly CDN Service maximum number of requests per second limit for each origin
-3. Copy `dist/integration.vcl` file's contents.
+3. Copy `dist/fingerprint-pro-fastly-vcl-integration.vcl` file's contents.
 4. Paste contents to your Fastly CDN Service's Custom VCL.
 5. Create a Dictionary named `fingerprint_config` or the value you specified as `config-table-name` in Step 2 and add the following values:
 
