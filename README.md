@@ -13,9 +13,6 @@
 <a href="https://discord.gg/39EpE2neBg"><img src="https://img.shields.io/discord/852099967190433792?style=logo&label=Discord&logo=Discord&logoColor=white" alt="Discord server"></a>
 </p>
 
-> [!WARNING]
-> This integration is in Beta
-
 # Fingerprint Pro Fastly VCL Proxy Integration
 
 [Fingerprint](https://fingerprint.com) is a device intelligence platform offering 99.5% accurate visitor identification.
