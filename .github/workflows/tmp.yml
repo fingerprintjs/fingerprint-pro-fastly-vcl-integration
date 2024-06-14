@@ -18,3 +18,9 @@ jobs:
           super_secret: ${{ secrets.SECOND_SECRET }}
         if: ${{ env.super_secret == '' }}
         run: 'echo second if'
+
+      - name: "check is AGENT_DOWNLOAD_SCRIPT_PATH exists"
+        env:
+          super_secret: ${{ secrets.AGENT_DOWNLOAD_SCRIPT_PATH }}
+        if: ${{ env.super_secret == '' }}
+        run: 'echo third if'
