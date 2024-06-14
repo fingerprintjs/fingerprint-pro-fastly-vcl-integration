@@ -47,7 +47,7 @@
       {
         "assets":[
           {
-            "path":"dist/integration.vcl",
+            "path":"dist/fingerprint-pro-fastly-vcl-integration.vcl",
             "label":"fingerprint-pro-fastly-vcl-integration.vcl"
           }
         ]

@@ -8,7 +8,7 @@ export async function writeTemplateOutput(output: string) {
     if (!fs.existsSync(distPath)) {
       fs.mkdirSync(path.join(process.cwd(), '/dist'))
     }
-    fs.writeFile(path.join(distPath, '/integration.vcl'), output, (err) => {
+    fs.writeFile(path.join(distPath, '/fingerprint-pro-fastly-vcl-integration.vcl'), output, (err) => {
       if (err) {
         reject(err)
         return
