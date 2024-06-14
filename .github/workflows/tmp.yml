@@ -6,6 +6,7 @@ on:
 jobs:
   test-secrets:
     runs-on: ubuntu-20.04
+    environment: production
     steps:
       - name: "check is APP_PRIVATE_KEY exists"
         env:
