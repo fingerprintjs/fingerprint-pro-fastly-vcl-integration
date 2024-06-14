@@ -142,9 +142,9 @@ sub proxy_identification_request {
 }
 
 sub proxy_browser_cache_recv {
-  if (req.url.path ~ "^/([\w|-]+)/([^/]+)(/.*)$") {
+  if (req.url.path ~ "^/([\w|-]+)/([^/]+)(.*)?$") {
     if(re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
-        set req.url = re.group.3 + "?" + req.url.qs;
+        set req.url = re.group.3 + "/?" + req.url.qs;
 
         unset req.http.cookie;
         set req.backend = F_api_fpjs_io;
@@ -165,13 +165,13 @@ sub proxy_status_page_error {
 
     declare local var.missing_env BOOL;
     set var.missing_env = false;
-    
+
     declare local var.proxy_secret_missing BOOL;
     set var.proxy_secret_missing = false;
-    
+
     declare local var.agent_path_missing BOOL;
     set var.agent_path_missing = false;
-    
+
     declare local var.result_path_missing BOOL;
     set var.result_path_missing = false;
 
@@ -197,7 +197,7 @@ sub proxy_status_page_error {
             <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
         </p>
     "};
-    
+
     set var.style_nonce = randomstr(16, "1234567890abcdef");
 
     set req.http.Content-Security-Policy = {"default-src 'none'; img-src https://fingerprint.com; style-src 'nonce-"}var.style_nonce{"'"};
