@@ -1,3 +1,12 @@
+## [1.0.0-test.2](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/compare/v1.0.0-test.1...v1.0.0-test.2) (2024-06-14)
+
+
+### Bug Fixes
+
+* browser cache 3rd group of regexp ([8bc5bfc](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/8bc5bfc1f086720163f4ceea5a645e3b7fbf5f94))
+* browser cache endpoint regions ([515d877](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/515d8777bdac39ea5d62d78e20f071b9c5304b01))
+* handle browser cache reqs without additional path ([bfdf9af](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/bfdf9aff3e4323451b8dd06f9acf1c742636ebd4))
+
 ## 1.0.0-test.1 (2024-06-14)
 
 
