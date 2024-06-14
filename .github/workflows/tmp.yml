@@ -1,0 +1,20 @@
+name: Temp
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-secrets:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: "check is APP_PRIVATE_KEY exists"
+        env:
+          super_secret: ${{ secrets.APP_PRIVATE_KEY }}
+        if: ${{ env.super_secret == '' }}
+        run: 'echo first if'
+
+      - name: "check is SECOND_SECRET exists"
+        env:
+          super_secret: ${{ secrets.SECOND_SECRET }}
+        if: ${{ env.super_secret == '' }}
+        run: 'echo second if'
