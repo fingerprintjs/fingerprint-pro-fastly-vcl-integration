@@ -30,7 +30,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd":"pnpm build --type all"
+        "prepareCmd":"pnpm build"
       }
     ],
     [
