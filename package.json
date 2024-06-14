@@ -1,6 +1,6 @@
 {
   "name": "fastly-integration",
-  "version": "0.1.0",
+  "version": "1.0.0-test.1",
   "scripts": {
     "test": "echo \"there are no tests planned\"",
     "test:dts": "echo \"there are no typechecks planned\"",
