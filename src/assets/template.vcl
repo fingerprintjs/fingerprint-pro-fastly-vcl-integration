@@ -240,7 +240,7 @@ sub proxy_status_page_error {
 
 sub vcl_deliver {
 #FASTLY deliver
-  if (req.http.X-Metrics) {
+  if (req.http.X-FPJS-REQUEST) {
       unset resp.http.Strict-Transport-Security;
   }
 }
@@ -249,7 +249,7 @@ sub vcl_recv {
 #FASTLY recv
     if(req.url.path ~ "^/([\w|-]+)") {
         if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
-            set req.http.X-Metrics = "true";
+            set req.http.X-FPJS-REQUEST = "true";
         }
     }
 
