@@ -1,3 +1,10 @@
+## [1.0.0-test.3](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/compare/v1.0.0-test.2...v1.0.0-test.3) (2024-06-26)
+
+
+### Features
+
+* add hsts header filter on vcl ([76e603d](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/76e603da8b6d13327de2b07262cc3b798ecb2406))
+
 ## [1.0.0-test.2](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/compare/v1.0.0-test.1...v1.0.0-test.2) (2024-06-14)
 
 
