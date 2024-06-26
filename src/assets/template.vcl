@@ -238,8 +238,21 @@ sub proxy_status_page_error {
     return (deliver);
 }
 
+sub vcl_deliver {
+#FASTLY deliver
+  if (req.http.X-FPJS-REQUEST) {
+      unset resp.http.Strict-Transport-Security;
+  }
+}
+
 sub vcl_recv {
 #FASTLY recv
+    if(req.url.path ~ "^/([\w|-]+)") {
+        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
+            set req.http.X-FPJS-REQUEST = "true";
+        }
+    }
+
     declare local var.target_path STRING;
     set var.target_path = "/" table.lookup(__config_table_name__, "INTEGRATION_PATH") "/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
     if (req.method == "GET" && req.url.path == var.target_path) {
