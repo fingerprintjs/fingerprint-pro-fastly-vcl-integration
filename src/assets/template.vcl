@@ -175,8 +175,14 @@ sub proxy_status_page_error {
     declare local var.result_path_missing BOOL;
     set var.result_path_missing = false;
 
+    declare local var.integration_path_missing BOOL;
+    set var.integration_path_missing = false;
+
     if(std.strlen(table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH")) == 0) {
         set var.agent_path_missing = true;
+    }
+    if(std.strlen(table.lookup(__config_table_name__, "INTEGRATION_PATH")) == 0) {
+        set var.integration_path_missing = true;
     }
     if(std.strlen(table.lookup(__config_table_name__, "GET_RESULT_PATH")) == 0) {
         set var.result_path_missing = true;
@@ -192,6 +198,7 @@ sub proxy_status_page_error {
     set var.integration_status_text = {"
         <p>
             <span>"}if(var.missing_env, "Your integration environment has problems", "Congratulations! Your integration deployed successfully"){"</span>
+            <span>INTEGRATION_OATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
             <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "❌", "✅"){"</span>
             <span>GET_RESULT_PATH: "}if(var.result_path_missing, "❌", "✅"){"</span>
             <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
@@ -220,12 +227,13 @@ sub proxy_status_page_error {
         </head>
         <body>
             <h1>Fingerprint Pro Fastly VCL Integration</h1>
-            "} var.integration_status_text {"
             <span>
                 Integration version: __integration_version__
             </span>
+            <span>The following configuration values have been set: </span>
+            "} var.integration_status_text {"
             <span>
-                Please reach out our support via <a href='mailto:support@fingerprint.com'>support@fingerprint.com</a> if you have any issues
+                If you have any questions, please contact us at <a href='mailto:support@fingerprint.com'>support@fingerprint.com</a>.
             </span>
         </body>
     </html>
