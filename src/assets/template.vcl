@@ -269,15 +269,16 @@ sub vcl_recv {
       call proxy_agent_download_recv;
     }
 
-    set var.target_path = "/" table.lookup(__config_table_name__, "INTEGRATION_PATH") "/" table.lookup(__config_table_name__, "GET_RESULT_PATH");
-    if (req.method == "POST" && req.url.path == var.target_path){
-      call proxy_identification_request;
-    }
-
-    if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/([^/]+)") {
-      if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
-        call proxy_browser_cache_recv;
-      }
+    if (req.url.path ~ "^/([\w|-]+)/([^/]+)") {
+        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
+            if (req.method == "POST") {
+                call proxy_identification_request;
+            }
+            if (req.method == "GET") {
+                call proxy_browser_cache_recv;
+            }
+            error 405;
+        }
     }
 
     if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/status") {
