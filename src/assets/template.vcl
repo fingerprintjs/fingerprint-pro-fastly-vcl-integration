@@ -146,7 +146,7 @@ sub proxy_browser_cache_recv {
     if(re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
         declare local var.path STRING;
         set var.path = regsub(re.group.3, "^/+", "");
-        set req.url = var.path + "/?" + req.url.qs;
+        set req.url = "/" var.path + "/?" + req.url.qs;
 
         unset req.http.cookie;
         set req.backend = F_api_fpjs_io;
@@ -200,7 +200,7 @@ sub proxy_status_page_error {
     set var.integration_status_text = {"
         <p>
             <span>"}if(var.missing_env, "Your integration environment has problems", "Congratulations! Your integration deployed successfully"){"</span>
-            <span>INTEGRATION_OATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
+            <span>INTEGRATION_PATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
             <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "❌", "✅"){"</span>
             <span>GET_RESULT_PATH: "}if(var.result_path_missing, "❌", "✅"){"</span>
             <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
