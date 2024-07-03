@@ -144,7 +144,9 @@ sub proxy_identification_request {
 sub proxy_browser_cache_recv {
   if (req.url.path ~ "^/([\w|-]+)/([^/]+)(.*)?$") {
     if(re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
-        set req.url = re.group.3 + "/?" + req.url.qs;
+        declare local var.path STRING;
+        set var.path = regsub(re.group.3, "^/+", "");
+        set req.url = var.path + "/?" + req.url.qs;
 
         unset req.http.cookie;
         set req.backend = F_api_fpjs_io;
