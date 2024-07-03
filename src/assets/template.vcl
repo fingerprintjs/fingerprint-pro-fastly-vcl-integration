@@ -271,13 +271,11 @@ sub vcl_recv {
 
     if (req.url.path ~ "^/([\w|-]+)/([^/]+)") {
         if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
-            if (req.method == "POST") {
-                call proxy_identification_request;
-            }
             if (req.method == "GET") {
                 call proxy_browser_cache_recv;
+            } else {
+                call proxy_identification_request;
             }
-            error 405;
         }
     }
 
