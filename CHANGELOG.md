@@ -1,3 +1,16 @@
+## [1.0.0-test.4](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/compare/v1.0.0-test.3...v1.0.0-test.4) (2024-07-03)
+
+
+### Features
+
+* update routing for ingress and browser cache endpoint ([ca1a5c9](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/ca1a5c98460d3079bf53e69f594e4d0838b7db75))
+
+
+### Bug Fixes
+
+* browser cache endpoint trailing slashes ([16c4f52](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/16c4f522957d8839fb8f9ee47ecdaf1512176340))
+* browser cache endpoint url path ([9b22942](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/9b22942cea49f6805f06022a5544776c7ba30ef9))
+
 ## [1.0.0-test.3](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/compare/v1.0.0-test.2...v1.0.0-test.3) (2024-06-26)
 
 
