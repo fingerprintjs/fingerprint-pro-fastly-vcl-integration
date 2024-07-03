@@ -144,7 +144,9 @@ sub proxy_identification_request {
 sub proxy_browser_cache_recv {
   if (req.url.path ~ "^/([\w|-]+)/([^/]+)(.*)?$") {
     if(re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
-        set req.url = re.group.3 + "/?" + req.url.qs;
+        declare local var.path STRING;
+        set var.path = regsub(re.group.3, "^/+", "");
+        set req.url = "/" var.path + "/?" + req.url.qs;
 
         unset req.http.cookie;
         set req.backend = F_api_fpjs_io;
@@ -198,7 +200,7 @@ sub proxy_status_page_error {
     set var.integration_status_text = {"
         <p>
             <span>"}if(var.missing_env, "Your integration environment has problems", "Congratulations! Your integration deployed successfully"){"</span>
-            <span>INTEGRATION_OATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
+            <span>INTEGRATION_PATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
             <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "❌", "✅"){"</span>
             <span>GET_RESULT_PATH: "}if(var.result_path_missing, "❌", "✅"){"</span>
             <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
@@ -267,15 +269,14 @@ sub vcl_recv {
       call proxy_agent_download_recv;
     }
 
-    set var.target_path = "/" table.lookup(__config_table_name__, "INTEGRATION_PATH") "/" table.lookup(__config_table_name__, "GET_RESULT_PATH");
-    if (req.method == "POST" && req.url.path == var.target_path){
-      call proxy_identification_request;
-    }
-
-    if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/([^/]+)") {
-      if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
-        call proxy_browser_cache_recv;
-      }
+    if (req.url.path ~ "^/([\w|-]+)/([^/]+)") {
+        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
+            if (req.method == "GET") {
+                call proxy_browser_cache_recv;
+            } else {
+                call proxy_identification_request;
+            }
+        }
     }
 
     if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/status") {
