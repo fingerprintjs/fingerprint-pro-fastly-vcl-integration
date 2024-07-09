@@ -1,6 +1,10 @@
 {
   "branches":[
-    "main"
+    "main",
+    {
+      "name": "test",
+      "prerelease": true
+    }
   ],
   "plugins":[
     [
@@ -26,7 +30,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd":"pnpm build --type all"
+        "prepareCmd":"pnpm build"
       }
     ],
     [
@@ -43,8 +47,8 @@
       {
         "assets":[
           {
-            "path":"dist/integration.vcl",
-            "label":"integration.vcl"
+            "path":"dist/fingerprint-pro-fastly-vcl-integration.vcl",
+            "label":"fingerprint-pro-fastly-vcl-integration.vcl"
           }
         ]
       }

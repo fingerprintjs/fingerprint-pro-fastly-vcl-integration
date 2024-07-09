@@ -1,0 +1,15 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - test
+
+jobs:
+  release-workflow:
+    uses: fingerprintjs/dx-team-toolkit/.github/workflows/release-typescript-project.yml@v1
+    with:
+      appId: ${{ vars.APP_ID }}
+    secrets:
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}

@@ -1,16 +1,16 @@
 import { getTemplateData } from './utils/getTemplateData'
-import { replaceTemplate } from './utils/replaceTemplate'
 import { writeTemplateOutput } from './utils/writeTemplateOutput'
+import { replaceTemplateForCI } from './utils/replaceTemplateForCI'
 
 async function main() {
   const data = await getTemplateData()
-  const output = replaceTemplate(data)
+  const output = replaceTemplateForCI(data)
   await writeTemplateOutput(output)
 }
 
 main()
   .then(() => {
-    console.log('Template built successfully')
+    console.log('CI Template built successfully')
     process.exit(0)
   })
   .catch((err) => {

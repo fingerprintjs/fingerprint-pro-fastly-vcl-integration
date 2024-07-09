@@ -1,0 +1,66 @@
+name: Test e2e for PR
+
+on:
+  pull_request:
+
+jobs:
+  check-changed-files:
+    runs-on: ubuntu-20.04
+    name: Check changed files
+    outputs:
+      TESTS_ARE_REQUIRED: ${{ steps.decision.outputs.TESTS_ARE_REQUIRED }}
+    steps:
+      - id: files
+        uses: jitterbit/get-changed-files@b17fbb00bdc0c0f63fcf166580804b4d2cdc2a42
+      - name: Make decision based on changed files
+        id: decision
+        run: |
+          testsAreRequired=false
+          for changed_file in ${{ steps.files.outputs.all }}; do
+            if [[ ${changed_file} =~ ^src/.*$ ]]; then
+              testsAreRequired=true
+            fi
+          done
+          echo $testsAreRequired
+          echo TESTS_ARE_REQUIRED=${testsAreRequired} >> $GITHUB_OUTPUT
+  build-and-test-e2e-mock:
+    # Required ENV Variables: FPJS_CI_DOMAIN, MOCK_FPCDN, INTEGRATION_PATH, CONFIG_TABLE_NAME, DEFAULT_ORIGIN, GET_RESULT_PATH, AGENT_DOWNLOAD_SCRIPT_PATH, FASTLY_API_TOKEN
+    runs-on: ubuntu-20.04
+    name: Test e2e for PR using mock app
+    needs: check-changed-files
+    if: needs['check-changed-files'].outputs.TESTS_ARE_REQUIRED == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: 'Install pnpm'
+        uses: pnpm/action-setup@129abb77bf5884e578fcaf1f37628e41622cc371
+        with:
+          version: 9
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build VCL File
+        run: pnpm run build:ci --fpcdn-domain=${{secrets.MOCK_FPCDN}} --fpjs-domain=${{secrets.MOCK_FPCDN}} --config-table-name=${{secrets.CONFIG_TABLE_NAME}}
+      - name: Extract Branch Name
+        id: extract-branch
+        run: |
+          echo SUBDOMAIN=mock-$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}} | perl -pe 's/[^a-zA-Z0-9]+/-/g and s/-+$//g' | tr '[:upper:]' '[:lower:]') >> $GITHUB_OUTPUT
+      - name: Run CI
+        run: pnpm run ci
+        env:
+          SERVICE_NAME: "${{steps.extract-branch.outputs.SUBDOMAIN}}.${{secrets.FPJS_CI_DOMAIN}}"
+          DEFAULT_ORIGIN: ${{secrets.DEFAULT_ORIGIN}}
+          GET_RESULT_PATH: ${{secrets.GET_RESULT_PATH}}
+          AGENT_DOWNLOAD_SCRIPT_PATH: ${{secrets.AGENT_DOWNLOAD_SCRIPT_PATH}}
+          CONFIG_TABLE_NAME: ${{secrets.CONFIG_TABLE_NAME}}
+          FASTLY_API_TOKEN: ${{secrets.FASTLY_API_TOKEN}}
+      - name: Run test
+        run: pnpm test:mock-e2e
+        env:
+          TEST_DOMAIN: 'http://${{steps.extract-branch.outputs.SUBDOMAIN}}.${{secrets.FPJS_CI_DOMAIN}}.global.prod.fastly.net'
+          INTEGRATION_PATH: ${{secrets.INTEGRATION_PATH}}
+          RESULT_PATH: ${{secrets.GET_RESULT_PATH}}
+          AGENT_PATH: ${{secrets.AGENT_DOWNLOAD_SCRIPT_PATH}}
+          API_URL: ${{secrets.MOCK_FPCDN}}

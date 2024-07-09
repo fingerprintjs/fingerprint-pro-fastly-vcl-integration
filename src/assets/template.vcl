@@ -1,3 +1,104 @@
+backend F_fpcdn_io {
+    .always_use_host_header = true;
+    .between_bytes_timeout = 10s;
+    .connect_timeout = 1s;
+    .dynamic = true;
+    .first_byte_timeout = 15s;
+    .host = "__fpcdn_domain__";
+    .host_header = "__fpcdn_domain__";
+    .max_connections = 200;
+    .port = "443";
+    .share_key = "__share_key__";
+    .ssl = true;
+    .ssl_cert_hostname = "__fpcdn_domain__";
+    .ssl_check_cert = always;
+    .ssl_sni_hostname = "__fpcdn_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __fpcdn_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+        .expected_response = 200;
+      }
+}
+backend F_api_fpjs_io {
+    .always_use_host_header = true;
+    .between_bytes_timeout = 10s;
+    .connect_timeout = 1s;
+    .dynamic = true;
+    .first_byte_timeout = 15s;
+    .host = "__global_fpjs_domain__";
+    .host_header = "__global_fpjs_domain__";
+    .max_connections = 200;
+    .port = "443";
+    .share_key = "__share_key__";
+    .ssl = true;
+    .ssl_cert_hostname = "__global_fpjs_domain__";
+    .ssl_check_cert = always;
+    .ssl_sni_hostname = "__global_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __global_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+        .expected_response = 200;
+      }
+}
+backend F_eu_api_fpjs_io {
+    .always_use_host_header = true;
+    .between_bytes_timeout = 10s;
+    .connect_timeout = 1s;
+    .dynamic = true;
+    .first_byte_timeout = 15s;
+    .host = "__europe_fpjs_domain__";
+    .host_header = "__europe_fpjs_domain__";
+    .max_connections = 200;
+    .port = "443";
+    .share_key = "__share_key__";
+    .ssl = true;
+    .ssl_cert_hostname = "__europe_fpjs_domain__";
+    .ssl_check_cert = always;
+    .ssl_sni_hostname = "__europe_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __europe_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+        .expected_response = 200;
+      }
+}
+backend F_ap_api_fpjs_io {
+    .always_use_host_header = true;
+    .between_bytes_timeout = 10s;
+    .connect_timeout = 1s;
+    .dynamic = true;
+    .first_byte_timeout = 15s;
+    .host = "__asia_fpjs_domain__";
+    .host_header = "__asia_fpjs_domain__";
+    .max_connections = 200;
+    .port = "443";
+    .share_key = "__share_key__";
+    .ssl = true;
+    .ssl_cert_hostname = "__asia_fpjs_domain__";
+    .ssl_check_cert = always;
+    .ssl_sni_hostname = "__asia_fpjs_domain__";
+    .probe = {
+        .dummy = true;
+        .initial = 5;
+        .request = "HEAD / HTTP/1.1"  "Host: __asia_fpjs_domain__" "Connection: close";
+        .threshold = 1;
+        .timeout = 2s;
+        .window = 5;
+        .expected_response = 200;
+      }
+}
+
 sub proxy_agent_download_recv {
   declare local var.apikey STRING;
   set var.apikey = if (std.strlen(querystring.get(req.url, "apiKey")) > 0, querystring.get(req.url, "apiKey"), "");
@@ -11,7 +112,7 @@ sub proxy_agent_download_recv {
   unset req.http.cookie;
 
   set req.url = "/v" + var.version + "/" + var.apikey + var.loaderversion + "?" + req.url.qs;
-  set req.backend = __cdn_backend__;
+  set req.backend = F_fpcdn_io;
   return(lookup);
 }
 
@@ -30,22 +131,82 @@ sub proxy_identification_request {
   set req.http.FPJS-Proxy-Client-IP = req.http.fastly-client-ip;
   set req.http.FPJS-Proxy-Forwarded-Host = req.http.host;
   set req.url = "/?" + req.url.qs;
-  set req.backend = __ingress_backend__;
+  set req.backend = F_api_fpjs_io;
+  if (querystring.get(req.url, "region") == "eu") {
+    set req.backend = F_eu_api_fpjs_io;
+  }
+  if(querystring.get(req.url, "region") == "ap") {
+    set req.backend = F_ap_api_fpjs_io;
+  }
   return(pass);
 }
 
 sub proxy_browser_cache_recv {
-  if (req.url.path ~ "^/__behavior_path__/([^/]+)(/.*)$") {
-    set req.url = re.group.2 + "?" + req.url.qs;
+  if (req.url.path ~ "^/([\w|-]+)/([^/]+)(.*)?$") {
+    if(re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
+        declare local var.path STRING;
+        set var.path = regsub(re.group.3, "^/+", "");
+        set req.url = "/" var.path + "/?" + req.url.qs;
 
-    unset req.http.cookie;
-    set req.backend = __ingress_backend__;
-    return(pass);
+        unset req.http.cookie;
+        set req.backend = F_api_fpjs_io;
+        if (querystring.get(req.url, "region") == "eu") {
+          set req.backend = F_eu_api_fpjs_io;
+        }
+        if(querystring.get(req.url, "region") == "ap") {
+          set req.backend = F_ap_api_fpjs_io;
+        }
+        return(pass);
+    }
   }
 }
 
 sub proxy_status_page_error {
     declare local var.style_nonce STRING;
+    declare local var.integration_status_text STRING;
+
+    declare local var.missing_env BOOL;
+    set var.missing_env = false;
+
+    declare local var.proxy_secret_missing BOOL;
+    set var.proxy_secret_missing = false;
+
+    declare local var.agent_path_missing BOOL;
+    set var.agent_path_missing = false;
+
+    declare local var.result_path_missing BOOL;
+    set var.result_path_missing = false;
+
+    declare local var.integration_path_missing BOOL;
+    set var.integration_path_missing = false;
+
+    if(std.strlen(table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH")) == 0) {
+        set var.agent_path_missing = true;
+    }
+    if(std.strlen(table.lookup(__config_table_name__, "INTEGRATION_PATH")) == 0) {
+        set var.integration_path_missing = true;
+    }
+    if(std.strlen(table.lookup(__config_table_name__, "GET_RESULT_PATH")) == 0) {
+        set var.result_path_missing = true;
+    }
+    if(std.strlen(table.lookup(__config_table_name__, "PROXY_SECRET")) == 0) {
+        set var.proxy_secret_missing = true;
+    }
+
+    if(var.proxy_secret_missing == true || var.agent_path_missing == true || var.result_path_missing == true) {
+        set var.missing_env = true;
+    }
+
+    set var.integration_status_text = {"
+        <p>
+            <span>"}if(var.missing_env, "Your integration environment has problems", "Congratulations! Your integration deployed successfully"){"</span>
+            <span>INTEGRATION_PATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
+            <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "❌", "✅"){"</span>
+            <span>GET_RESULT_PATH: "}if(var.result_path_missing, "❌", "✅"){"</span>
+            <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
+        </p>
+    "};
+
     set var.style_nonce = randomstr(16, "1234567890abcdef");
 
     set req.http.Content-Security-Policy = {"default-src 'none'; img-src https://fingerprint.com; style-src 'nonce-"}var.style_nonce{"'"};
@@ -68,44 +229,64 @@ sub proxy_status_page_error {
         </head>
         <body>
             <h1>Fingerprint Pro Fastly VCL Integration</h1>
-            <span>Your Fastly VCL Integration is deployed</span>
             <span>
                 Integration version: __integration_version__
             </span>
+            <span>The following configuration values have been set: </span>
+            "} var.integration_status_text {"
             <span>
-                Please reach out our support via <a href='mailto:support@fingerprint.com'>support@fingerprint.com</a> if you have any issues
+                If you have any questions, please contact us at <a href='mailto:support@fingerprint.com'>support@fingerprint.com</a>.
             </span>
         </body>
     </html>
     "};
 
+    set obj.status = 200;
     set obj.http.content-type = "text/html; charset=utf-8";
     synthetic var.status_page_response;
 
     return (deliver);
 }
 
+sub vcl_deliver {
+#FASTLY deliver
+  if (req.http.X-FPJS-REQUEST) {
+      unset resp.http.Strict-Transport-Security;
+  }
+}
+
 sub vcl_recv {
 #FASTLY recv
+    if(req.url.path ~ "^/([\w|-]+)") {
+        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
+            set req.http.X-FPJS-REQUEST = "true";
+        } else {
+            return(pass);
+        }
+    } else {
+        return(pass);
+    }
+
     declare local var.target_path STRING;
-    set var.target_path = "/__behavior_path__/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
+    set var.target_path = "/" table.lookup(__config_table_name__, "INTEGRATION_PATH") "/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
     if (req.method == "GET" && req.url.path == var.target_path) {
       call proxy_agent_download_recv;
     }
 
-    set var.target_path = "/__behavior_path__/" table.lookup(__config_table_name__, "GET_RESULT_PATH");
-    if (req.method == "POST" && req.url.path == var.target_path){
-      call proxy_identification_request;
+    if (req.url.path ~ "^/([\w|-]+)/([^/]+)") {
+        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
+            if (req.method == "GET") {
+                call proxy_browser_cache_recv;
+            } else {
+                call proxy_identification_request;
+            }
+        }
     }
 
-    if (req.method == "GET" && req.url.path ~ "^/__behavior_path__/([^/]+)") {
-      if (re.group.1 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
-        call proxy_browser_cache_recv;
-      }
-    }
-
-    if (req.method == "GET" && req.url.path ~ "^/__behavior_path__/status") {
-        error 600;
+    if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/status") {
+        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
+            error 600;
+        }
     }
 }
 
