@@ -21,8 +21,6 @@ Fingerprint Fastly VCL Proxy Integration is responsible for proxying identificat
 
 ## 🚧 Requirements and expectations
 
-- **Integration in Beta**: Please report any issues to our [support team](https://fingerprint.com/support).
-
 - **Limited to Enterprise plan**: The Fastly VCL Proxy Integration is exclusively supported for customers on the **Enterprise** Plan. Other customers are encouraged to use [Custom subdomain setup](https://dev.fingerprint.com/docs/custom-subdomain-setup) or [Cloudflare Proxy Integration](https://dev.fingerprint.com/docs/cloudflare-integration).
 
 - **Manual updates occasionally required**: The underlying data contract in the identification logic can change to keep up with browser updates. Using the Fastly VCL Proxy Integration might require occasional manual updates on your side. Ignoring these updates will lead to lower accuracy or service disruption.
