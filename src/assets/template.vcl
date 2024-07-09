@@ -260,6 +260,8 @@ sub vcl_recv {
     if(req.url.path ~ "^/([\w|-]+)") {
         if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
             set req.http.X-FPJS-REQUEST = "true";
+        } else {
+            return(pass);
         }
     }
 
