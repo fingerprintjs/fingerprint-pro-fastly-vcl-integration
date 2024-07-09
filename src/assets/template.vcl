@@ -263,6 +263,8 @@ sub vcl_recv {
         } else {
             return(pass);
         }
+    } else {
+        return(pass);
     }
 
     declare local var.target_path STRING;
