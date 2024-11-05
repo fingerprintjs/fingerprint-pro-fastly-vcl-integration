@@ -59,7 +59,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
    });
    ```
 
-See the [Fastly VCL proxy integration guide](https://dev.fingerprint.com/docs/fastly-vcl-proxy-integration#step-3-configure-the-fingerprint-javascript-agent-on-your-client) in our documentation for more details.
+See the [Fastly VCL proxy integration guide](https://dev.fingerprint.com/docs/fastly-vcl-proxy-integration#step-4-configure-the-fingerprint-javascript-agent-on-your-client) in our documentation for more details.
 
 ## Customizing the template
 
