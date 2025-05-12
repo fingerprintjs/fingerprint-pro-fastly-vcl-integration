@@ -15,7 +15,7 @@
 
 # Fingerprint Pro Fastly VCL Proxy Integration
 
-[Fingerprint](https://fingerprint.com) is a device intelligence platform offering 99.5% accurate visitor identification.
+[Fingerprint](https://fingerprint.com) is a device intelligence platform offering industry-leading accuracy.
 
 Fingerprint Fastly VCL Proxy Integration is responsible for proxying identification and agent-download requests between your website and Fingerprint through your Fastly infrastructure via [VCL](https://www.fastly.com/documentation/guides/vcl/using/). The integration consists of a custom VCL file you can add to your Fastly CDN Service.
 
