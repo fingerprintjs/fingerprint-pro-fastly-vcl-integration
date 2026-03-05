@@ -100,19 +100,17 @@ backend F_ap_api_fpjs_io {
 }
 
 sub proxy_agent_download_recv {
-  declare local var.apikey STRING;
-  set var.apikey = if (std.strlen(querystring.get(req.url, "apiKey")) > 0, querystring.get(req.url, "apiKey"), "");
-  declare local var.version STRING;
-  set var.version = if (std.strlen(querystring.get(req.url, "version")) > 0, querystring.get(req.url, "version"), "3");
-  declare local var.loaderversion STRING;
-  set var.loaderversion = if (std.strlen(querystring.get(req.url, "loaderVersion")) > 0, "/loader_v" + querystring.get(req.url, "loaderVersion") + ".js", "");
-
   set req.url = querystring.add(req.url, "ii", "fingerprint-pro-fastly-vcl/__integration_version__/procdn");
 
   unset req.http.cookie;
 
-  set req.url = "/v" + var.version + "/" + var.apikey + var.loaderversion + "?" + req.url.qs;
-  set req.backend = F_fpcdn_io;
+  set req.backend = F_api_fpjs_io;
+  if (querystring.get(req.url, "region") == "eu") {
+    set req.backend = F_eu_api_fpjs_io;
+  }
+  if(querystring.get(req.url, "region") == "ap") {
+    set req.backend = F_ap_api_fpjs_io;
+  }
   return(lookup);
 }
 
@@ -142,23 +140,15 @@ sub proxy_identification_request {
 }
 
 sub proxy_browser_cache_recv {
-  if (req.url.path ~ "^/([\w|-]+)/([^/]+)(.*)?$") {
-    if(re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
-        declare local var.path STRING;
-        set var.path = regsub(re.group.3, "^/+", "");
-        set req.url = "/" var.path + "/?" + req.url.qs;
-
-        unset req.http.cookie;
-        set req.backend = F_api_fpjs_io;
-        if (querystring.get(req.url, "region") == "eu") {
-          set req.backend = F_eu_api_fpjs_io;
-        }
-        if(querystring.get(req.url, "region") == "ap") {
-          set req.backend = F_ap_api_fpjs_io;
-        }
-        return(pass);
-    }
+  unset req.http.cookie;
+  set req.backend = F_api_fpjs_io;
+  if (querystring.get(req.url, "region") == "eu") {
+    set req.backend = F_eu_api_fpjs_io;
   }
+  if(querystring.get(req.url, "region") == "ap") {
+    set req.backend = F_ap_api_fpjs_io;
+  }
+  return(pass);
 }
 
 sub proxy_status_page_error {
@@ -171,29 +161,17 @@ sub proxy_status_page_error {
     declare local var.proxy_secret_missing BOOL;
     set var.proxy_secret_missing = false;
 
-    declare local var.agent_path_missing BOOL;
-    set var.agent_path_missing = false;
-
-    declare local var.result_path_missing BOOL;
-    set var.result_path_missing = false;
-
     declare local var.integration_path_missing BOOL;
     set var.integration_path_missing = false;
 
-    if(std.strlen(table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH")) == 0) {
-        set var.agent_path_missing = true;
-    }
     if(std.strlen(table.lookup(__config_table_name__, "INTEGRATION_PATH")) == 0) {
         set var.integration_path_missing = true;
-    }
-    if(std.strlen(table.lookup(__config_table_name__, "GET_RESULT_PATH")) == 0) {
-        set var.result_path_missing = true;
     }
     if(std.strlen(table.lookup(__config_table_name__, "PROXY_SECRET")) == 0) {
         set var.proxy_secret_missing = true;
     }
 
-    if(var.proxy_secret_missing == true || var.agent_path_missing == true || var.result_path_missing == true) {
+    if(var.proxy_secret_missing == true || var.integration_path_missing == true) {
         set var.missing_env = true;
     }
 
@@ -201,8 +179,6 @@ sub proxy_status_page_error {
         <p>
             <span>"}if(var.missing_env, "Your integration environment has problems", "Congratulations! Your integration deployed successfully"){"</span>
             <span>INTEGRATION_PATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
-            <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "❌", "✅"){"</span>
-            <span>GET_RESULT_PATH: "}if(var.result_path_missing, "❌", "✅"){"</span>
             <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
         </p>
     "};
@@ -257,9 +233,22 @@ sub vcl_deliver {
 
 sub vcl_recv {
 #FASTLY recv
+    declare local var.is_fpjs_request BOOL;
+    set var.is_fpjs_request = false;
+
+    declare local var.integration_path STRING;
+    set var.integration_path = table.lookup(fingerprint_config, "INTEGRATION_PATH");
+
+    declare local var.prefix_to_match STRING;
+    set var.prefix_to_match = "/" + var.integration_path;
+
+    declare local var.prefix_len INTEGER;
+    set var.prefix_len = std.strlen(var.prefix_to_match);
+
     if(req.url.path ~ "^/([\w|-]+)") {
-        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
+        if (re.group.1 == var.integration_path) {
             set req.http.X-FPJS-REQUEST = "true";
+            set var.is_fpjs_request = true;
         } else {
             return(pass);
         }
@@ -267,25 +256,25 @@ sub vcl_recv {
         return(pass);
     }
 
-    declare local var.target_path STRING;
-    set var.target_path = "/" table.lookup(__config_table_name__, "INTEGRATION_PATH") "/" table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
-    if (req.method == "GET" && req.url.path == var.target_path) {
-      call proxy_agent_download_recv;
-    }
-
-    if (req.url.path ~ "^/([\w|-]+)/([^/]+)") {
-        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH") && re.group.2 == table.lookup(__config_table_name__, "GET_RESULT_PATH")) {
-            if (req.method == "GET") {
-                call proxy_browser_cache_recv;
-            } else {
-                call proxy_identification_request;
-            }
+    if (substr(req.url, 0, var.prefix_len) == var.prefix_to_match) {
+        if (std.strlen(req.url) == var.prefix_len) {
+            set req.url = "/";
+        } else if (substr(req.url, var.prefix_len, 1) == "/") {
+            set req.url = substr(req.url, var.prefix_len);
         }
     }
 
-    if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/status") {
-        if (re.group.1 == table.lookup(__config_table_name__, "INTEGRATION_PATH")) {
+    if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/web/.*$") {
+        call proxy_agent_download_recv;
+    }
+
+    if (req.url.path ~ "^/([\w|-]+)(/.*)?$") {
+        if (std.strlen(re.group.2) == 0 || re.group.2 == "/") {
+            call proxy_identification_request;
+        } elseif (re.group.1 ~ "^/status$") {
             error 600;
+        } else {
+            call proxy_browser_cache_recv;
         }
     }
 }
