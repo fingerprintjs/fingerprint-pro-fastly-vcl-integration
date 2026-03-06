@@ -273,8 +273,6 @@ sub vcl_deliver {
 
 sub vcl_recv {
 #FASTLY recv
-    declare local var.is_fpjs_request BOOL;
-    set var.is_fpjs_request = false;
 
     declare local var.integration_path STRING;
     set var.integration_path = table.lookup(__config_table_name__, "INTEGRATION_PATH");
