@@ -278,10 +278,10 @@ sub vcl_recv {
     set var.integration_path = table.lookup(__config_table_name__, "INTEGRATION_PATH");
 
     declare local var.agent_script_path STRING;
-    set var.agent_script_path = table.lookup(fingerprint_config, "AGENT_SCRIPT_DOWNLOAD_PATH");
+    set var.agent_script_path = table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH");
 
     declare local var.get_result_path STRING;
-    set var.get_result_path = table.lookup(fingerprint_config, "GET_RESULT_PATH");
+    set var.get_result_path = table.lookup(__config_table_name__, "GET_RESULT_PATH");
 
     # This condition creates regular expression groups sliced from the URL by "/" so we can use them later like "re.group.1" and "re.group.2"
     if (req.url ~ "^/([\w|-]+)/?([\w|-]+)?") {
