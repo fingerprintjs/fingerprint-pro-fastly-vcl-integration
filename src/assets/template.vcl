@@ -100,17 +100,35 @@ backend F_ap_api_fpjs_io {
 }
 
 sub proxy_agent_download_recv {
+  declare local var.v4path STRING;
   set req.url = querystring.add(req.url, "ii", "fingerprint-pro-fastly-vcl/__integration_version__/procdn");
 
   unset req.http.cookie;
 
-  set req.backend = F_api_fpjs_io;
-  if (querystring.get(req.url, "region") == "eu") {
-    set req.backend = F_eu_api_fpjs_io;
+  if (req.http.FPJS-API-Version == "4") {
+    if (req.url.path ~ "^/([\w|-]+)(/.*)?$") {
+        set var.v4path = re.group.2;
+    }
+
+    set req.url = var.v4path + "?" + req.url.qs;
+    set req.backend = F_api_fpjs_io;
+    if (querystring.get(req.url, "region") == "eu") {
+      set req.backend = F_eu_api_fpjs_io;
+    }
+    if(querystring.get(req.url, "region") == "ap") {
+      set req.backend = F_ap_api_fpjs_io;
+    }
+  } elseif (req.http.FPJS-API-Version == "3") {
+    set req.backend = F_fpcdn_io;
+    declare local var.apikey STRING;
+    set var.apikey = if (std.strlen(querystring.get(req.url, "apiKey")) > 0, querystring.get(req.url, "apiKey"), "");
+    declare local var.version STRING;
+    set var.version = if (std.strlen(querystring.get(req.url, "version")) > 0, querystring.get(req.url, "version"), "3");
+    declare local var.loaderversion STRING;
+    set var.loaderversion = if (std.strlen(querystring.get(req.url, "loaderVersion")) > 0, "/loader_v" + querystring.get(req.url, "loaderVersion") + ".js", "");
+    set req.url = "/v" + var.version + "/" + var.apikey + var.loaderversion + "?" + req.url.qs;
   }
-  if(querystring.get(req.url, "region") == "ap") {
-    set req.backend = F_ap_api_fpjs_io;
-  }
+
   return(lookup);
 }
 
@@ -140,6 +158,14 @@ sub proxy_identification_request {
 }
 
 sub proxy_browser_cache_recv {
+  if (req.url.path ~ "^/([\w|-]+)/([^/]+)(.*)?$") {
+    declare local var.path STRING;
+    set var.path = regsub(re.group.3, "^/+", "");
+    if (req.http.FPJS-API-Version == "4") {
+      set var.path = re.group.2 + "/" + var.path;
+    }
+    set req.url = "/" var.path + "/?" + req.url.qs;
+  }
   unset req.http.cookie;
   set req.backend = F_api_fpjs_io;
   if (querystring.get(req.url, "region") == "eu") {
@@ -161,17 +187,29 @@ sub proxy_status_page_error {
     declare local var.proxy_secret_missing BOOL;
     set var.proxy_secret_missing = false;
 
+    declare local var.agent_path_missing BOOL;
+    set var.agent_path_missing = false;
+
+    declare local var.result_path_missing BOOL;
+    set var.result_path_missing = false;
+
     declare local var.integration_path_missing BOOL;
     set var.integration_path_missing = false;
 
+    if(std.strlen(table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH")) == 0) {
+        set var.agent_path_missing = true;
+    }
     if(std.strlen(table.lookup(__config_table_name__, "INTEGRATION_PATH")) == 0) {
         set var.integration_path_missing = true;
+    }
+    if(std.strlen(table.lookup(__config_table_name__, "GET_RESULT_PATH")) == 0) {
+        set var.result_path_missing = true;
     }
     if(std.strlen(table.lookup(__config_table_name__, "PROXY_SECRET")) == 0) {
         set var.proxy_secret_missing = true;
     }
 
-    if(var.proxy_secret_missing == true || var.integration_path_missing == true) {
+    if(var.proxy_secret_missing == true || var.agent_path_missing == true || var.result_path_missing == true) {
         set var.missing_env = true;
     }
 
@@ -179,6 +217,8 @@ sub proxy_status_page_error {
         <p>
             <span>"}if(var.missing_env, "Your integration environment has problems", "Congratulations! Your integration deployed successfully"){"</span>
             <span>INTEGRATION_PATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
+            <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "❌", "✅"){"</span>
+            <span>GET_RESULT_PATH: "}if(var.result_path_missing, "❌", "✅"){"</span>
             <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
         </p>
     "};
@@ -239,42 +279,58 @@ sub vcl_recv {
     declare local var.integration_path STRING;
     set var.integration_path = table.lookup(fingerprint_config, "INTEGRATION_PATH");
 
-    declare local var.prefix_to_match STRING;
-    set var.prefix_to_match = "/" + var.integration_path;
+    declare local var.agent_script_path STRING;
+    set var.agent_script_path = table.lookup(fingerprint_config, "AGENT_SCRIPT_DOWNLOAD_PATH");
 
-    declare local var.prefix_len INTEGER;
-    set var.prefix_len = std.strlen(var.prefix_to_match);
+    declare local var.get_result_path STRING;
+    set var.get_result_path = table.lookup(fingerprint_config, "GET_RESULT_PATH");
 
-    if(req.url.path ~ "^/([\w|-]+)") {
+    # This condition creates regular expression groups sliced from the URL by "/" so we can use them later like "re.group.1" and "re.group.2"
+    if (req.url ~ "^/([\w|-]+)/?([\w|-]+)?") {
+        # If the request is for the integration, route it to the integration
         if (re.group.1 == var.integration_path) {
             set req.http.X-FPJS-REQUEST = "true";
-            set var.is_fpjs_request = true;
+            # BEGIN: API v3 routing
+            set req.http.FPJS-API-Version = "3";
+            if (std.strlen(var.get_result_path) > 0 && std.strlen(var.agent_script_path) > 0) {
+                if (re.group.2 == var.agent_script_path && req.method == "GET") {
+                    # If the request is for the agent script, route it to the agent script
+                    call proxy_agent_download_recv;
+                } elseif (re.group.2 == var.get_result_path && req.method == "GET") {
+                    # If the request is for the browser cache, route it to the browser cache
+                    call proxy_browser_cache_recv;
+                } elseif (re.group.2 == var.get_result_path && req.method == "POST") {
+                    # If the request is for the identification, route it to the identification
+                    call proxy_identification_request;
+                } elseif (re.group.2 == "status") {
+                    # If the request is for the status page, route it to the status page
+                    error 600;
+                }
+            }
+            # END: API v3 routing
+
+
+            # BEGIN: API v4 routing
+            set req.http.FPJS-API-Version = "4";
+
+            if (re.group.2 == "web" && req.method == "GET") {
+                # If the request is for the agent script, route it to the agent script
+                call proxy_agent_download_recv;
+            } elseif (re.group.2 == "status") {
+                # If the request is for the status page, route it to the status page
+                error 600;
+            } elseif (std.strlen(re.group.2) > 1 && req.method == "GET") {
+                # If the request is for the browser cache, route it to the browser cache
+                call proxy_browser_cache_recv;
+            } elseif (req.method == "POST") {
+                # If the request is for the identification, route it to the identification
+                call proxy_identification_request;
+            }
+            # END: API v4 routing
+
         } else {
+            # If the request is not for the integration, pass it to the origin
             return(pass);
-        }
-    } else {
-        return(pass);
-    }
-
-    if (substr(req.url, 0, var.prefix_len) == var.prefix_to_match) {
-        if (std.strlen(req.url) == var.prefix_len) {
-            set req.url = "/";
-        } else if (substr(req.url, var.prefix_len, 1) == "/") {
-            set req.url = substr(req.url, var.prefix_len);
-        }
-    }
-
-    if (req.method == "GET" && req.url.path ~ "^/([\w|-]+)/web/.*$") {
-        call proxy_agent_download_recv;
-    }
-
-    if (req.url.path ~ "^/([\w|-]+)(/.*)?$") {
-        if (std.strlen(re.group.2) == 0 || re.group.2 == "/") {
-            call proxy_identification_request;
-        } elseif (re.group.1 ~ "^/status$") {
-            error 600;
-        } else {
-            call proxy_browser_cache_recv;
         }
     }
 }
