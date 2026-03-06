@@ -277,7 +277,7 @@ sub vcl_recv {
     set var.is_fpjs_request = false;
 
     declare local var.integration_path STRING;
-    set var.integration_path = table.lookup(fingerprint_config, "INTEGRATION_PATH");
+    set var.integration_path = table.lookup(__config_table_name__, "INTEGRATION_PATH");
 
     declare local var.agent_script_path STRING;
     set var.agent_script_path = table.lookup(fingerprint_config, "AGENT_SCRIPT_DOWNLOAD_PATH");
