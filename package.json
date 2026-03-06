@@ -10,7 +10,9 @@
     "build:ci": "ts-node src/ci-build.ts",
     "ci": "ts-node src/scripts/ci.ts",
     "test:mock-e2e": "ts-node src/scripts/mockTests.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "changeset:publish": "HUSKY=0 changeset publish",
+    "changeset:version": "changeset version"
   },
   "lint-staged": {
     "*.ts": "pnpm run lint:fix"
