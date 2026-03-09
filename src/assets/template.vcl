@@ -129,6 +129,7 @@ sub proxy_agent_download_recv {
     set req.url = "/v" + var.version + "/" + var.apikey + var.loaderversion + "?" + req.url.qs;
   }
 
+  unset req.http.FPJS-API-Version;
   return(lookup);
 }
 
@@ -154,6 +155,8 @@ sub proxy_identification_request {
   if(querystring.get(req.url, "region") == "ap") {
     set req.backend = F_ap_api_fpjs_io;
   }
+
+  unset req.http.FPJS-API-Version;
   return(pass);
 }
 
@@ -174,6 +177,8 @@ sub proxy_browser_cache_recv {
   if(querystring.get(req.url, "region") == "ap") {
     set req.backend = F_ap_api_fpjs_io;
   }
+
+  unset req.http.FPJS-API-Version;
   return(pass);
 }
 
