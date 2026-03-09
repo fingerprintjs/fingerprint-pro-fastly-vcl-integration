@@ -6,10 +6,6 @@ on:
       - main
       - test
 
-permissions:
-  id-token: write  # Required for Trusted Publishing: https://docs.npmjs.com/trusted-publishers
-  contents: read
-
 jobs:
   release:
     name: 'Build project, run CI checks and publish new release'
