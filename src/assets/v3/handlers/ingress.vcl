@@ -21,5 +21,7 @@ sub proxy_identification_request {
     set req.backend = F_ap_api_fpjs_io;
   }
 
+  unset req.http.X-FPJS-REQUEST; # Remove the X-FPJS-REQUEST header
+
   return(pass);
 }
