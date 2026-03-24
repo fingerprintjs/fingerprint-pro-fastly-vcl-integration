@@ -17,6 +17,12 @@ sub proxy_status_page_error {
     declare local var.integration_path_missing BOOL;
     set var.integration_path_missing = false;
 
+    declare local var.v3_missing_env BOOL;
+    set var.v3_missing_env = false;
+
+    declare local var.environment_warnings_text STRING;
+    set var.environment_warnings_text = "✅ Congratulations! Your integration deployed successfully";
+
     if(std.strlen(table.lookup(__config_table_name__, "AGENT_SCRIPT_DOWNLOAD_PATH")) == 0) {
         set var.agent_path_missing = true;
     }
@@ -30,16 +36,20 @@ sub proxy_status_page_error {
         set var.proxy_secret_missing = true;
     }
 
-    if(var.proxy_secret_missing == true || var.agent_path_missing == true || var.result_path_missing == true) {
+    if(var.proxy_secret_missing == true || var.integration_path_missing == true) {
         set var.missing_env = true;
+        set var.environment_warnings_text = "❌ Your integration environment has problems on both API v3 and v4. Please check the following:";
+    } else if(var.agent_path_missing == true || var.result_path_missing == true) {
+        set var.v3_missing_env = true;
+        set var.environment_warnings_text = "⚠️ Your integration environment doesn't support API v3. If you don't use API v3 Agent, you may skip this warning. Please check the following, if you still need to use API v3:";
     }
 
     set var.integration_status_text = {"
         <p>
-            <span>"}if(var.missing_env, "Your integration environment has problems", "Congratulations! Your integration deployed successfully"){"</span>
+            <span>"} var.environment_warnings_text {"</span>
             <span>INTEGRATION_PATH: "} if(var.integration_path_missing, "❌", "✅") {"</span>
-            <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "❌", "✅"){"</span>
-            <span>GET_RESULT_PATH: "}if(var.result_path_missing, "❌", "✅"){"</span>
+            <span>AGENT_SCRIPT_DOWNLOAD_PATH: "}if(var.agent_path_missing, "⚠️", "✅"){"</span>
+            <span>GET_RESULT_PATH: "}if(var.result_path_missing, "⚠️", "✅"){"</span>
             <span>PROXY_SECRET: "}if(var.proxy_secret_missing, "❌", "✅"){"</span>
         </p>
     "};
