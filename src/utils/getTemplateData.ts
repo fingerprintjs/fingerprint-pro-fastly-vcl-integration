@@ -16,7 +16,7 @@ async function getTemplate(src: string) {
 export async function getTemplateData() {
   return `# Common shared backends for all versions
 ${await getTemplate('backends.vcl')}
-${await getTemplate('utils/is_warden_request.vcl')}
+${await getTemplate('utils/is_authorized_request.vcl')}
 
 # Status page handler
 ${await getTemplate('status.vcl')}
