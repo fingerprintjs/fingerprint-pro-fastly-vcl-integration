@@ -1,5 +1,4 @@
 sub proxy_agent_download_recv {
-  set req.url = querystring.add(req.url, "ii", "fingerprint-pro-fastly-vcl/__integration_version__/procdn");
 
   unset req.http.cookie;
 
