@@ -6,7 +6,6 @@ export function replaceTemplate(data: string) {
   const version = packageJson.version
   const argumentValues = getArgumentValues()
   let output = data.toString()
-  output = output.replace(/__fpcdn_domain__/g, argumentValues.cdnBackend)
   output = output.replace(/__global_fpjs_domain__/g, argumentValues.ingressBackend)
   output = output.replace(/__europe_fpjs_domain__/g, `eu.${argumentValues.ingressBackend}`)
   output = output.replace(/__asia_fpjs_domain__/g, `ap.${argumentValues.ingressBackend}`)
