@@ -11,7 +11,7 @@ import { setVCLMain } from './api/setVCLMain'
 async function main() {
   configDotenv()
   const VCL_FILE_NAME = 'fingerprint-pro-fastly-vcl'
-  const SERVICE_NAME = process.env.SERVICE_NAME as string
+  const SERVICE_NAME = process.env.SERVICE_NAME ?? ''
   try {
     const service = await createService(SERVICE_NAME)
     const versionsSorted = service.versions.sort((a, b) => b.number - a.number)
