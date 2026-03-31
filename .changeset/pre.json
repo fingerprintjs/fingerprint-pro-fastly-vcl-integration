@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "rc",
+  "initialVersions": {
+    "fastly-integration": "1.0.0"
+  },
+  "changesets": []
+}
