@@ -11,7 +11,5 @@ sub proxy_agent_download_recv {
   set var.loaderversion = if (std.strlen(querystring.get(req.url, "loaderVersion")) > 0, "/loader_v" + querystring.get(req.url, "loaderVersion") + ".js", "");
   set req.url = "/v" + var.version + "/" + var.apikey + var.loaderversion + "?" + req.url.qs;
 
-  unset req.http.X-FPJS-REQUEST; # Remove the X-FPJS-REQUEST header
-
   return(lookup);
 }
