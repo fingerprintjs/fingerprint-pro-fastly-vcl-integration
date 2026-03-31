@@ -4,7 +4,6 @@ sub handle_integration_routing {
 
   # If the request is for the integration, route it to the integration
   if (std.prefixof(req.url, "/" + var.integration_path)) {
-    set req.http.X-FPJS-REQUEST = "true";
     if (req.url ~ ".*?(/status$)") {
       # If the request is for the status page, route it to the status page
       error 600;
