@@ -5,7 +5,7 @@ on:
 
 jobs:
   check-changed-files:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Check changed files
     outputs:
       TESTS_ARE_REQUIRED: ${{ steps.decision.outputs.TESTS_ARE_REQUIRED }}
@@ -25,7 +25,7 @@ jobs:
           echo TESTS_ARE_REQUIRED=${testsAreRequired} >> $GITHUB_OUTPUT
   build-and-test-e2e-mock:
     # Required ENV Variables: FPJS_CI_DOMAIN, MOCK_FPCDN, INTEGRATION_PATH, CONFIG_TABLE_NAME, DEFAULT_ORIGIN, GET_RESULT_PATH, AGENT_DOWNLOAD_SCRIPT_PATH, FASTLY_API_TOKEN
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Test e2e for PR using mock app
     needs: check-changed-files
     if: needs['check-changed-files'].outputs.TESTS_ARE_REQUIRED == 'true'
