@@ -1,3 +1,9 @@
+## 2.0.0-rc.1
+
+### Patch Changes
+
+- HSTS header now can be removed on each integration request ([71363f0](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/71363f073c19d57f84685624b8793f1d0537e3ca))
+
 ## 2.0.0-rc.0
 
 ### Major Changes

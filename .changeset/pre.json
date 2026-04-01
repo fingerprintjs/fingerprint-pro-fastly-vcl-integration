@@ -5,6 +5,7 @@
     "fastly-integration": "1.0.0"
   },
   "changesets": [
-    "fiery-sides-attend"
+    "fiery-sides-attend",
+    "orange-phones-show"
   ]
 }
