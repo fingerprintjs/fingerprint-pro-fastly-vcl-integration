@@ -1,9 +1,14 @@
 sub vcl_deliver {
 #FASTLY deliver
-  declare local var.integration_path STRING;
-  set var.integration_path = table.lookup(__config_table_name__, "INTEGRATION_PATH");
-  if (std.prefixof(req.url, "/" + var.integration_path)) {
+  if (client.identity == "integration-request") {
     unset resp.http.Strict-Transport-Security;
+  }
+}
+
+sub vcl_fetch {
+#FASTLY fetch
+  if (client.identity == "integration-request") {
+    unset beresp.http.Strict-Transport-Security;
   }
 }
 
