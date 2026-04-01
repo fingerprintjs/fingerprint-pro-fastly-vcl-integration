@@ -4,7 +4,8 @@ sub handle_integration_routing {
 
   # If the request is for the integration, route it to the integration
   if (std.prefixof(req.url, "/" + var.integration_path)) {
-    set req.http.X-FPJS-REQUEST = "true";
+    # Please see more details why client.identity is safe to use for global variable between subroutines https://www.fastly.com/documentation/reference/vcl/variables/client-connection/client-identity/
+    set client.identity = "integration-request";
     if (req.url ~ ".*?(/status$)") {
       # If the request is for the status page, route it to the status page
       error 600;

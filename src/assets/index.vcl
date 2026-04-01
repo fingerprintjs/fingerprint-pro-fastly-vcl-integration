@@ -1,7 +1,14 @@
 sub vcl_deliver {
 #FASTLY deliver
-  if (req.http.X-FPJS-REQUEST) {
-      unset resp.http.Strict-Transport-Security;
+  if (client.identity == "integration-request") {
+    unset resp.http.Strict-Transport-Security;
+  }
+}
+
+sub vcl_fetch {
+#FASTLY fetch
+  if (client.identity == "integration-request") {
+    unset beresp.http.Strict-Transport-Security;
   }
 }
 
