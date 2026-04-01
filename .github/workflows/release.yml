@@ -17,6 +17,7 @@ jobs:
       language: node
       language-version: 24
       prepare-command: pnpm build
+      github-release-files: 'dist/fingerprint-pro-fastly-vcl-integration.vcl'
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
       RUNNER_APP_PRIVATE_KEY: ${{ secrets.RUNNER_APP_PRIVATE_KEY }}
