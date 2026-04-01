@@ -1,3 +1,14 @@
+## 2.0.0
+
+### Major Changes
+
+- Introduced API v4 support ([41afc61](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/41afc61ea0094f53cfd2a61e1887c6fd71488481))
+
+### Patch Changes
+
+- Introduce release artifact on GitHub releases ([09df897](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/09df897b7adc9ba714a33206640d9e73aa221869))
+- HSTS header now can be removed on each integration request ([71363f0](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/71363f073c19d57f84685624b8793f1d0537e3ca))
+
 ## 2.0.0-rc.2
 
 ### Patch Changes
