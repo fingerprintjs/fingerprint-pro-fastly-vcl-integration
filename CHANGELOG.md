@@ -1,3 +1,9 @@
+## 2.0.0-rc.2
+
+### Patch Changes
+
+- Introduce release artifact on GitHub releases ([09df897](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/commit/09df897b7adc9ba714a33206640d9e73aa221869))
+
 ## 2.0.0-rc.1
 
 ### Patch Changes
