@@ -5,6 +5,7 @@
     "fastly-integration": "1.0.0"
   },
   "changesets": [
+    "empty-wolves-push",
     "fiery-sides-attend",
     "orange-phones-show"
   ]
