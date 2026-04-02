@@ -35,7 +35,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
    | Key                        | Example Value        | Description                                             |
    | -------------------------- | -------------------- | ------------------------------------------------------- |
    | PROXY_SECRET               | 6XI9CLf3C9oHSB12TTaI | Fingerprint proxy secret generated in Step 1            |
-   | GET_RESULT_PATH            | nocmjw               | Random path segment Fingerprint identification requests |
+   | INTEGRATION_PATH           | 02mbd3               | Random path prefix for proxy integration endpoints      |
 
 3. Go to [Releases](https://github.com/fingerprintjs/fastly-vcl-proxy/releases) to download the latest `fingerprint-pro-fastly-vcl-integration.vcl` template file.
 4. Paste the template file contents to your Fastly CDN Service's **Custom VCL**.
