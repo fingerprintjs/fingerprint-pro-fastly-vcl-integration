@@ -8,7 +8,7 @@
   </a>
 </p>
 <p align="center">
-<a href="https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/releases"><img src="https://img.shields.io/github/v/release/fingerprintjs/fingerprint-pro-fastly-vcl-integration" alt="Current version"></a>
+<a href="https://github.com/fingerprintjs/fastly-vcl-proxy/releases"><img src="https://img.shields.io/github/v/release/fingerprintjs/fastly-vcl-proxy" alt="Current version"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/:license-mit-blue.svg" alt="MIT license"></a>
 <a href="https://discord.gg/39EpE2neBg"><img src="https://img.shields.io/discord/852099967190433792?style=logo&label=Discord&logo=Discord&logoColor=white" alt="Discord server"></a>
 </p>
@@ -35,27 +35,19 @@ This is a quick overview of the installation setup. For detailed step-by-step in
    | Key                        | Example Value        | Description                                             |
    | -------------------------- | -------------------- | ------------------------------------------------------- |
    | PROXY_SECRET               | 6XI9CLf3C9oHSB12TTaI | Fingerprint proxy secret generated in Step 1            |
-   | INTEGRATION_PATH           | 02mbd3               | Random path prefix for proxy integration endpoints      |
-   | AGENT_SCRIPT_DOWNLOAD_PATH | z5kms2               | Random path segment for downloading the JS agent        |
    | GET_RESULT_PATH            | nocmjw               | Random path segment Fingerprint identification requests |
 
-3. Go to [Releases](https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration/releases) to download the latest `fingerprint-pro-fastly-vcl-integration.vcl` template file.
+3. Go to [Releases](https://github.com/fingerprintjs/fastly-vcl-proxy/releases) to download the latest `fingerprint-pro-fastly-vcl-integration.vcl` template file.
 4. Paste the template file contents to your Fastly CDN Service's **Custom VCL**.
 5. Configure the Fingerprint [JS Agent](https://dev.fingerprint.com/docs/js-agent) on your website using the paths defined in Step 2.
 
    ```javascript
-   import * as FingerprintJS from '@fingerprintjs/fingerprintjs-pro'
+   import * as Fingerprint from '@fingerprint/agent'
 
-   const fpPromise = FingerprintJS.load({
+   const fpPromise = Fingerprint.start({
+     endpoints: ['https://yourwebsite.com/INTEGRATION_PATH?region=us'],
      apiKey: 'PUBLIC_API_KEY',
-     scriptUrlPattern: [
-       'https://yourwebsite.com/INTEGRATION-PATH/AGENT_SCRIPT_DOWNLOAD_PATH?apiKey=<apiKey>&version=<version>&loaderVersion=<loaderVersion>',
-       FingerprintJS.defaultScriptUrlPattern, // Fallback to default CDN in case of error
-     ],
-     endpoint:
-       'https://yourwebsite.com/INTEGRATION-PATH/GET_RESULT_PATH?region=us',
-       FingerprintJS.defaultEndpoint // Fallback to default endpoint in case of error
-     ],
+     region: 'us'
    });
    ```
 
@@ -65,7 +57,7 @@ See the [Fastly VCL proxy integration guide](https://dev.fingerprint.com/docs/fa
 
 If you need to customize the template configuration, you can clone this repository and build the template locally with custom parameters.
 
-1. Clone the repository: `git clone https://github.com/fingerprintjs/fingerprint-pro-fastly-vcl-integration`
+1. Clone the repository: `git clone https://github.com/fingerprintjs/fastly-vcl-proxy`
 2. Run `pnpm install`
 3. Build the VCL file with `pnpm build`
    - **`--config-table-name` (Optional, default: `fingerprint_config`):** Identifier name for Fastly VCL's dictionary to store Fingerprint related variables
