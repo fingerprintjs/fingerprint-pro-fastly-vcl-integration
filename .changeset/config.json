@@ -3,7 +3,7 @@
   "changelog": [
     "@fingerprintjs/changesets-changelog-format",
     {
-      "repo": "fingerprintjs/fingerprint-pro-fastly-vcl-integration"
+      "repo": "fingerprintjs/fastly-vcl-proxy"
     }
   ],
   "commit": false,
