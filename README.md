@@ -44,7 +44,7 @@ This is a quick overview of the installation setup. For detailed step-by-step in
    ```javascript
    import * as Fingerprint from '@fingerprint/agent'
 
-   const fpPromise = Fingerprint.start({
+   const fp = Fingerprint.start({
      endpoints: ['https://yourwebsite.com/INTEGRATION_PATH?region=us'],
      apiKey: 'PUBLIC_API_KEY',
      region: 'us'
