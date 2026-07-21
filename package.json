@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"there are no tests planned\"",
     "test:dts": "echo \"there are no typechecks planned\"",
-    "lint": "eslint --max-warnings 0 .",
+    "lint": "eslint --max-warnings 0",
     "lint:fix": "pnpm lint --fix",
     "build": "node --experimental-strip-types src/build.ts",
     "build:ci": "node --experimental-strip-types src/ci-build.ts",
