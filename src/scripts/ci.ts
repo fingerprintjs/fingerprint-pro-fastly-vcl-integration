@@ -1,12 +1,12 @@
-import { createService } from './api/createService'
-import { createVersion } from './api/createVersion'
-import { listVCLFiles } from './api/listVCLFiles'
-import { getBuiltVCL } from './utils/getBuiltVCL'
-import { createVCLFile } from './api/createVCLFile'
-import { updateVCLFile } from './api/updateVCLFile'
-import { activateVersion } from './api/activateVersion'
+import { createService } from './api/createService.ts'
+import { createVersion } from './api/createVersion.ts'
+import { listVCLFiles } from './api/listVCLFiles.ts'
+import { getBuiltVCL } from './utils/getBuiltVCL.ts'
+import { createVCLFile } from './api/createVCLFile.ts'
+import { updateVCLFile } from './api/updateVCLFile.ts'
+import { activateVersion } from './api/activateVersion.ts'
 import { configDotenv } from 'dotenv'
-import { setVCLMain } from './api/setVCLMain'
+import { setVCLMain } from './api/setVCLMain.ts'
 
 async function main() {
   configDotenv()

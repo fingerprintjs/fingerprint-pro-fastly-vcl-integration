@@ -1,6 +1,6 @@
-import { getTemplateData } from './utils/getTemplateData'
-import { writeTemplateOutput } from './utils/writeTemplateOutput'
-import { replaceTemplateForCI } from './utils/replaceTemplateForCI'
+import { getTemplateData } from './utils/getTemplateData.ts'
+import { writeTemplateOutput } from './utils/writeTemplateOutput.ts'
+import { replaceTemplateForCI } from './utils/replaceTemplateForCI.ts'
 
 async function main() {
   const data = await getTemplateData()

@@ -1,4 +1,4 @@
-import { replaceTemplate } from './replaceTemplate'
+import { replaceTemplate } from './replaceTemplate.ts'
 
 export function replaceTemplateForCI(data: string) {
   let output = replaceTemplate(data)

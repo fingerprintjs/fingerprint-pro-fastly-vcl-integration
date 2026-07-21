@@ -1,4 +1,4 @@
-import { createClient } from '../utils/createClient'
+import { createClient } from '../utils/createClient.ts'
 
 export async function setVCLMain(serviceId: string, fileName: string, versionNumber: number) {
   const vclClient = createClient('vcl')

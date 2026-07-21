@@ -1,4 +1,4 @@
-import { createClient } from '../utils/createClient'
+import { createClient } from '../utils/createClient.ts'
 
 export async function updateVCLFile(service_id: string, name: string, versionNumber: number, content: string) {
   return createClient('vcl').updateCustomVcl({
