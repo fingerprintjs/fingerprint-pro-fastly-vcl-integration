@@ -62,7 +62,7 @@ If you need to customize the template configuration, you can clone this reposito
 3. Build the VCL file with `pnpm build`
    - **`--config-table-name` (Optional, default: `fingerprint_config`):** Identifier name for Fastly VCL's dictionary to store Fingerprint related variables
    - **`--fpjs-domain` (Optional, default: `api.fpjs.io`):** Domain to make user identification requests
-   - **`--max-connections` (Optional, default: `200`):** Fastly CDN Service maximum number of requests per second limit for each origin
+   - **`--max-connections` (Optional, default: `200`):** Maximum number of concurrent connections Fastly will open to each Fingerprint origin backend (per cache node)
 4. Copy `dist/fingerprint-pro-fastly-vcl-integration.vcl` file's contents.
 5. Paste contents to your Fastly CDN Service's **Custom VCL**.
 
