@@ -12,7 +12,7 @@
     "build:ci": "node --experimental-strip-types src/ci-build.ts",
     "ci": "node --experimental-strip-types src/scripts/ci.ts",
     "test:mock-e2e": "node --experimental-strip-types src/scripts/mockTests.ts",
-    "prepare": "husky install",
+    "prepare": "husky",
     "changeset:publish": "HUSKY=0 changeset publish",
     "changeset:version": "changeset version"
   },
