@@ -15,6 +15,6 @@ export function getArgumentValues() {
   return {
     ingressBackend: args['--fpjs-domain'] ?? 'api.fpjs.io',
     configTableName: args['--config-table-name'] ?? 'fingerprint_config',
-    maxConnections: Number(args['--max-connections'] ?? '200'),
+    maxConnections,
   }
 }
