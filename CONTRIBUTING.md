@@ -26,7 +26,7 @@ Run `pnpm lint` to check for issues, or `pnpm lint:fix` to automatically fix the
 
 ### How to test
 
-End-to-end tests run against a mock application and are executed automatically by the `mock-e2e.yml` workflow on every PR — you don't need to run them locally.
+End-to-end tests run against a mock application and are executed automatically by the `mock-e2e.yml` workflow on every PR. You don't need to run them locally.
 
 ### Changing API URLs
 
