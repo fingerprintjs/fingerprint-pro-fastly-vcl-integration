@@ -1,25 +1,32 @@
+## 2.1.0
+
+### Minor Changes
+
+- implement `--max-connections` flag into fingerprint backends ([9379cad](https://github.com/fingerprintjs/fastly-vcl-proxy/commit/9379cadb3009584c58c3f167ca91a2ba791df12c))
+
 ## 2.0.0
 
 ### Major Changes
 
 - Added support for Fingerprint [JavaScript agent v4](https://docs.fingerprint.com/reference/js-agent-v4). Compatibility with JavaScript agent v3 is maintained, you can upgrade to the latest JavaScript agent at your convenience.
 
-    When upgrading to the JavaScript agent v4, remove the scriptUrlPattern and endpoint options. Replace them with a single endpoints option pointing to the worker route of your Cloudflare proxy integration:
+  When upgrading to the JavaScript agent v4, remove the scriptUrlPattern and endpoint options. Replace them with a single endpoints option pointing to the worker route of your Cloudflare proxy integration:
 
-    ```diff
-    - const fpPromise = FingerprintJS.load({
-    -   apiKey: PUBLIC_API_KEY,
-    -   scriptUrlPattern: "https://yourwebsite.com/INTEGRATION_PATH/AGENT_SCRIPT_DOWNLOAD_PATH?apiKey=<apiKey>&version=<version>&loaderVersion=<loaderVersion>",
-    -   endpoint: "https://yourwebsite.com/INTEGRATION_PATH/GET_RESULT_PATH?region=eu",
-    - });
+  ```diff
+  - const fpPromise = FingerprintJS.load({
+  -   apiKey: PUBLIC_API_KEY,
+  -   scriptUrlPattern: "https://yourwebsite.com/INTEGRATION_PATH/AGENT_SCRIPT_DOWNLOAD_PATH?apiKey=<apiKey>&version=<version>&loaderVersion=<loaderVersion>",
+  -   endpoint: "https://yourwebsite.com/INTEGRATION_PATH/GET_RESULT_PATH?region=eu",
+  - });
 
-    + const fpPromise = Fingerprint.start({
-    +   apiKey: PUBLIC_API_KEY,
-    +   endpoints: "https://yourwebsite.com/INTEGRATION_PATH/?region=eu",
-    + });
-    ```
-    
-    See [Migration guide for Fastly VCL from API v3 to API v4](http://localhost:3001/docs/fastly-vcl-v3-to-v4-migration-guide) for more details. ([41afc61](https://github.com/fingerprintjs/fastly-vcl-proxy/commit/41afc61ea0094f53cfd2a61e1887c6fd71488481))
+  + const fpPromise = Fingerprint.start({
+  +   apiKey: PUBLIC_API_KEY,
+  +   endpoints: "https://yourwebsite.com/INTEGRATION_PATH/?region=eu",
+  + });
+  ```
+
+  See [Migration guide for Fastly VCL from API v3 to API v4](http://localhost:3001/docs/fastly-vcl-v3-to-v4-migration-guide) for more details. ([41afc61](https://github.com/fingerprintjs/fastly-vcl-proxy/commit/41afc61ea0094f53cfd2a61e1887c6fd71488481))
+
 ## 2.0.0-rc.2
 
 ### Patch Changes
