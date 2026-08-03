@@ -1,6 +1,6 @@
-import packageJson from '../../package.json'
-import { getArgumentValues } from './getArgumentValues'
-import { randomString } from './randomString'
+import packageJson from '../../package.json' with { type: 'json' }
+import { getArgumentValues } from './getArgumentValues.ts'
+import { randomString } from './randomString.ts'
 
 export function replaceTemplate(data: string) {
   const version = packageJson.version

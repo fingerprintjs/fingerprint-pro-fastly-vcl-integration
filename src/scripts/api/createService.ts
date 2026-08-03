@@ -1,5 +1,5 @@
-import { createClient } from '../utils/createClient'
-import { activateVersion } from './activateVersion'
+import { createClient } from '../utils/createClient.ts'
+import { activateVersion } from './activateVersion.ts'
 
 export async function createService(domain: string) {
   const client = createClient('service')
